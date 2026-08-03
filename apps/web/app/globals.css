@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f5f0;
+  --foreground: #1c2a24;
+  --forest: #1e3a2f;
+  --forest-deep: #142b22;
+  --moss: #4c6b56;
+  --trail: #c97b3d;
+  --trail-deep: #a95f24;
+  --cream: #f6f5f0;
+  --sand: #ece8dd;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-forest: var(--forest);
+  --color-forest-deep: var(--forest-deep);
+  --color-moss: var(--moss);
+  --color-trail: var(--trail);
+  --color-trail-deep: var(--trail-deep);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.container-x {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.btn-forest {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--forest);
+  color: #fff;
+}
+.btn-forest:hover {
+  background-color: var(--forest-deep);
+}
+
+.btn-trail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--trail);
+  color: #fff;
+}
+.btn-trail:hover {
+  background-color: var(--trail-deep);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid rgba(30, 58, 47, 0.2);
+  color: var(--forest);
+}
+.btn-ghost:hover {
+  background-color: rgba(30, 58, 47, 0.05);
+}
+
+.card {
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
