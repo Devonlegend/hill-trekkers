@@ -7,7 +7,18 @@ import type { Post } from "@/lib/types";
 import { useAuth } from "@/components/auth-context";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/Skeleton";
+import { Reveal } from "@/components/Reveal";
 import { PostComposerModal } from "./PostComposerModal";
+import { placeholderImage } from "@/lib/images";
+import { Heart, ChatCircle, Plus } from "@phosphor-icons/react";
+
+function formatPostDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 export default function CommunityPage() {
   const { user } = useAuth();
@@ -29,7 +40,6 @@ export default function CommunityPage() {
         setNextCursor(d.next_cursor);
       })
       .catch(() => setPosts([]));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadMore = async () => {
@@ -43,69 +53,92 @@ export default function CommunityPage() {
 
   return (
     <>
-      <section className="bg-forest-deep py-14 text-white">
-        <div className="container-x flex flex-wrap items-end justify-between gap-4">
+      <section className="bg-forest-deep py-14 text-white md:py-16">
+        <div className="container-x flex flex-wrap items-end justify-between gap-5">
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-white/60">Community</p>
-            <h1 className="text-3xl font-extrabold md:text-4xl">Stories from the trail</h1>
-            <p className="mt-2 max-w-lg text-white/75">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+              Community
+            </p>
+            <h1 className="max-w-xl text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
+              Stories from the trail
+            </h1>
+            <p className="mt-4 max-w-lg leading-relaxed text-white/70">
               Photos, updates, and memories from club treks. Share your own.
             </p>
           </div>
           {user && (
             <button onClick={() => setShowComposer(true)} className="btn-trail">
-              + New post
+              <Plus size={16} weight="bold" />
+              New post
             </button>
           )}
         </div>
       </section>
 
-      <section className="container-x py-12">
+      <section className="container-x py-12 md:py-16">
         {posts === null ? (
           <div className="grid gap-5 md:grid-cols-2">
-            <Skeleton className="h-72" />
-            <Skeleton className="h-72" />
+            <Skeleton className="h-72 rounded-2xl" />
+            <Skeleton className="h-72 rounded-2xl" />
           </div>
         ) : posts.length === 0 ? (
           <EmptyState
             title="No posts yet"
-            message={user ? "Be the first to share something from the trail." : "Check back soon — members are always sharing new stories."}
+            message={user ? "Be the first to share something from the trail." : "Check back soon. Members are always sharing new stories."}
           />
         ) : (
           <div className="grid gap-5 md:grid-cols-2">
-            {posts.map((p) => (
-              <Link key={p.id} href={`/community/${p.id}`} className="card group overflow-hidden p-0! transition-transform hover:-translate-y-1">
-                {p.media_urls.length > 0 && (
-                  <div className="h-56 bg-sand bg-cover bg-center" style={{ backgroundImage: `url(${p.media_urls[0]})` }} />
-                )}
-                <div className="space-y-3 p-5">
-                  <div className="flex items-center gap-3">
-                    <span className="grid h-9 w-9 place-items-center rounded-full bg-forest text-xs font-bold text-white">
-                      {p.author.full_name.slice(0, 1).toUpperCase()}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-forest">{p.author.full_name}</p>
-                      <p className="text-xs text-foreground/50">{new Date(p.created_at).toLocaleDateString()}</p>
-                    </div>
+            {posts.map((p, i) => (
+              <Reveal key={p.id} delay={(i % 2) * 70}>
+                <Link
+                  href={`/community/${p.id}`}
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                >
+                  <div className="relative overflow-hidden">
+                    <div
+                      className="aspect-[4/3] bg-sand bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
+                      style={{
+                        backgroundImage: `url(${p.media_urls[0] || placeholderImage(p.id, 800, 600)})`,
+                      }}
+                    />
                     {p.category_name && (
-                      <span className="ml-auto rounded-full bg-forest/10 px-3 py-1 text-xs font-semibold text-forest">
+                      <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-forest backdrop-blur">
                         {p.category_name}
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-3 text-sm text-foreground/80">{p.caption || "View post"}</p>
-                  <div className="flex items-center gap-4 text-xs font-medium text-foreground/60">
-                    <span>♥ {p.like_count}</span>
-                    <span>💬 {p.comment_count}</span>
+                  <div className="flex flex-1 flex-col gap-4 p-5">
+                    <div className="flex items-center gap-3">
+                      <span className="grid h-9 w-9 place-items-center rounded-full bg-forest text-xs font-bold text-white">
+                        {p.author.full_name.slice(0, 1).toUpperCase()}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-forest">{p.author.full_name}</p>
+                        <p className="text-xs text-foreground/50">{formatPostDate(p.created_at)}</p>
+                      </div>
+                    </div>
+                    <p className="line-clamp-3 text-sm leading-relaxed text-foreground/80">
+                      {p.caption || "View post"}
+                    </p>
+                    <div className="mt-auto flex items-center gap-5 text-xs font-medium text-foreground/55">
+                      <span className={`inline-flex items-center gap-1.5 ${p.liked_by_me ? "text-trail-deep" : ""}`}>
+                        <Heart size={14} weight={p.liked_by_me ? "fill" : "regular"} />
+                        {p.like_count}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <ChatCircle size={14} />
+                        {p.comment_count}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </Reveal>
             ))}
           </div>
         )}
 
         {nextCursor && (
-          <div className="mt-8 text-center">
+          <div className="mt-10 text-center">
             <button onClick={loadMore} disabled={loadingMore} className="btn-ghost">
               {loadingMore ? "Loading…" : "Load more"}
             </button>

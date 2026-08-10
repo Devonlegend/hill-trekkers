@@ -4,8 +4,8 @@ export function Skeleton({ className = "" }: { className?: string }) {
 
 export function TripCardSkeleton() {
   return (
-    <div className="card overflow-hidden p-0!">
-      <Skeleton className="h-44 w-full rounded-none" />
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm">
+      <Skeleton className="aspect-[4/3] w-full rounded-none" />
       <div className="space-y-3 p-5">
         <Skeleton className="h-4 w-2/3" />
         <Skeleton className="h-4 w-1/2" />

@@ -1,99 +1,241 @@
+"use client";
+
+import Link from "next/link";
+import { Reveal } from "@/components/Reveal";
+import { placeholderImage } from "@/lib/images";
+import {
+  PersonSimpleHike,
+  AirplaneTilt,
+  Tent,
+  Smiley,
+  Coffee,
+  ShieldCheck,
+  UsersThree,
+  Handshake,
+  ArrowUpRight,
+} from "@phosphor-icons/react";
+
+const WHAT_WE_DO = [
+  {
+    label: "Hikes",
+    slug: "hikes",
+    desc: "Regular local and day hikes for every fitness level.",
+    icon: PersonSimpleHike,
+  },
+  {
+    label: "Out-of-state trips",
+    slug: "out-of-state-trips",
+    desc: "Multi-day adventures that take us beyond the city.",
+    icon: AirplaneTilt,
+  },
+  {
+    label: "Out in the wild",
+    slug: "out-in-the-wild",
+    desc: "Camping and wilderness expeditions off the grid.",
+    icon: Tent,
+  },
+  {
+    label: "Hikers day out",
+    slug: "hikers-day-out",
+    desc: "Casual, social, low-difficulty outings. A great first trip.",
+    icon: Smiley,
+  },
+  {
+    label: "Tea and pep meets",
+    slug: "tea-and-pep-meets",
+    desc: "Non-hiking meetups that keep the club close.",
+    icon: Coffee,
+  },
+];
+
+const CONDUCT = [
+  {
+    title: "Respect the trail",
+    desc: "Leave no trace. Carry out what you carry in.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Respect each other",
+    desc: "No shaming, no gatekeeping. Every pace is a good pace.",
+    icon: UsersThree,
+  },
+  {
+    title: "Look out for your crew",
+    desc: "If someone slows down, we slow down together.",
+    icon: Handshake,
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: "I showed up alone on my first hike. I left with about fifteen new friends.",
+    name: "Amaka",
+    role: "Club member",
+  },
+  {
+    quote: "The early-bird pricing meant I could actually afford to start hiking regularly.",
+    name: "Tunde",
+    role: "Club member",
+  },
+  {
+    quote: "The leaders are so thorough. Safety first, always, and still so much fun.",
+    name: "Zainab",
+    role: "Club member",
+  },
+];
+
 export default function AboutPage() {
   return (
     <>
       <section className="bg-forest-deep py-16 text-white md:py-20">
         <div className="container-x">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/60">About us</p>
-          <h1 className="max-w-2xl text-3xl font-extrabold leading-tight md:text-5xl">
+          <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
             We walk up mountains. We lift each other up.
           </h1>
+          <p className="mt-5 max-w-xl leading-relaxed text-white/70">
+            The Hill Trekkers Club is a growing community of hikers, campers,
+            and weekend wanderers across Nigeria. Here&apos;s who we are.
+          </p>
         </div>
       </section>
 
-      <section className="container-x py-16 md:py-20">
-        <div className="grid gap-10 md:grid-cols-2">
-          <div className="space-y-4 text-foreground/80 leading-relaxed">
-            <h2 className="text-2xl font-bold text-forest">Our story</h2>
+      {/* Our story */}
+      <section className="container-x grid items-center gap-12 py-20 md:grid-cols-2 md:py-28">
+        <Reveal>
+          <h2 className="text-2xl font-bold tracking-tight text-forest md:text-3xl">
+            Our story
+          </h2>
+          <div className="mt-6 space-y-4 leading-relaxed text-foreground/80">
             <p>
-              The Hill Trekkers Club started with a simple idea: that adventure is
-              better shared. What began as a handful of friends climbing one
+              The Hill Trekkers Club started with a simple idea: that adventure
+              is better shared. What began as a handful of friends climbing one
               hill became a growing community of hikers, campers, and weekend
               wanderers across Nigeria.
             </p>
             <p>
-              Every trek is planned with care — safety briefings, vetted routes,
-              trained leaders, and a pace that welcomes first-timers as warmly as
-              it challenges seasoned trekkers.
+              Every trek is planned with care. Safety briefings, vetted routes,
+              trained leaders, and a pace that welcomes first-timers as warmly
+              as it challenges seasoned trekkers.
             </p>
             <p>
-              But the real reason people stay is the people. On the trail, we
+              But the real reason people stay is the people. On the trail we
               cheer each other up steep sections, share water and snacks, and
               celebrate every summit together. That&apos;s the Hill Trekkers way.
             </p>
           </div>
-          <div className="space-y-4 text-foreground/80 leading-relaxed">
-            <h2 className="text-2xl font-bold text-forest">What we do</h2>
-            <ul className="space-y-3">
-              {[
-                "Hikes — regular local and day hikes for all fitness levels",
-                "Out-of-state trips — multi-day adventures beyond the city",
-                "Out in the wild — camping and wilderness expeditions",
-                "Hikers day out — casual, social, low-difficulty outings",
-                "Tea & pep meets — non-hiking meetups to keep the club close",
-              ].map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span className="mt-1 text-trail">▲</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+        </Reveal>
+        <Reveal delay={100}>
+          <div className="relative">
+            <div className="overflow-hidden rounded-2xl">
+              <img
+                src={placeholderImage("trekkers-on-the-trail", 1000, 1100)}
+                alt="A group of trekkers on a wooded trail"
+                className="aspect-[4/5] w-full object-cover"
+              />
+            </div>
+            <div className="absolute -bottom-6 -left-6 hidden w-48 overflow-hidden rounded-xl border-4 border-[var(--background)] shadow-lg md:block">
+              <img
+                src={placeholderImage("summit-hands-up", 500, 400)}
+                alt="Trekkers celebrating at a summit"
+                className="aspect-[5/4] w-full object-cover"
+              />
+            </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
-      <section className="bg-sand/60 py-16">
+      {/* What we do */}
+      <section className="border-y border-black/5 bg-sand/50 py-20 md:py-24">
         <div className="container-x">
-          <h2 className="text-2xl font-bold text-forest md:text-3xl">Code of conduct</h2>
-          <p className="mt-2 max-w-2xl text-foreground/60">
-            We keep the trail kind. Everyone who joins us agrees to these basics.
-          </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {[
-              { t: "Respect the trail", d: "Leave no trace — carry out what you carry in." },
-              { t: "Respect each other", d: "No shaming, no gatekeeping. Every pace is a good pace." },
-              { t: "Look out for your crew", d: "If someone slows down, we slow down together." },
-            ].map((c) => (
-              <div key={c.t} className="card">
-                <p className="font-bold text-forest">{c.t}</p>
-                <p className="mt-2 text-sm text-foreground/60">{c.d}</p>
-              </div>
+          <Reveal>
+            <h2 className="text-2xl font-bold tracking-tight text-forest md:text-3xl">
+              What we do
+            </h2>
+            <p className="mt-3 max-w-xl text-foreground/60">
+              Five ways to get out there, each with its own rhythm.
+            </p>
+          </Reveal>
+          <div className="mt-10 divide-y divide-black/5 border-y border-black/5">
+            {WHAT_WE_DO.map((item, i) => (
+              <Reveal key={item.slug} delay={i * 50}>
+                <Link
+                  href={`/activities/${item.slug}`}
+                  className="group flex items-center gap-5 py-6 transition-colors hover:bg-white/60"
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-forest text-white transition-colors group-hover:bg-trail">
+                    <item.icon size={20} weight="duotone" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-forest group-hover:underline">
+                      {item.label}
+                    </p>
+                    <p className="mt-0.5 text-sm text-foreground/60">{item.desc}</p>
+                  </div>
+                  <ArrowUpRight
+                    size={18}
+                    className="shrink-0 text-forest/30 transition-colors group-hover:text-trail"
+                  />
+                </Link>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="container-x py-16 md:py-20">
-        <h2 className="text-2xl font-bold text-forest md:text-3xl">What members say</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            {
-              q: "I showed up alone on my first hike. I left with about fifteen new friends.",
-              a: "Amaka",
-            },
-            {
-              q: "The early-bird pricing meant I could actually afford to start hiking regularly.",
-              a: "Tunde",
-            },
-            {
-              q: "The leaders are so thorough — safety first, always, and still so much fun.",
-              a: "Zainab",
-            },
-          ].map((t) => (
-            <figure key={t.a} className="card">
-              <blockquote className="text-foreground/80">“{t.q}”</blockquote>
-              <figcaption className="mt-4 text-sm font-semibold text-forest">— {t.a}</figcaption>
-            </figure>
+      {/* Code of conduct */}
+      <section className="container-x py-20 md:py-28">
+        <Reveal>
+          <div className="max-w-2xl">
+            <h2 className="text-2xl font-bold tracking-tight text-forest md:text-3xl">
+              We keep the trail kind
+            </h2>
+            <p className="mt-3 text-foreground/60">
+              Everyone who joins us agrees to these basics.
+            </p>
+          </div>
+        </Reveal>
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {CONDUCT.map((c, i) => (
+            <Reveal key={c.title} delay={i * 70}>
+              <div className="flex h-full flex-col gap-4 rounded-2xl border border-black/5 bg-white p-7">
+                <span className="grid h-11 w-11 place-items-center rounded-full bg-sand text-forest">
+                  <c.icon size={20} weight="duotone" />
+                </span>
+                <div>
+                  <p className="font-bold text-forest">{c.title}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                    {c.desc}
+                  </p>
+                </div>
+              </div>
+            </Reveal>
           ))}
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="bg-forest-deep py-20 text-white md:py-28">
+        <div className="container-x">
+          <Reveal>
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+              What members say
+            </h2>
+          </Reveal>
+          <div className="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
+            {TESTIMONIALS.map((t, i) => (
+              <Reveal key={t.name} delay={i * 80}>
+                <blockquote className="flex h-full flex-col justify-between gap-8 border-t border-white/15 pt-6">
+                  <p className="text-lg leading-relaxed text-white/85 md:text-xl">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <figcaption>
+                    <p className="font-semibold text-white">{t.name}</p>
+                    <p className="mt-1 text-sm text-white/50">{t.role}</p>
+                  </figcaption>
+                </blockquote>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
     </>

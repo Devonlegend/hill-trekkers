@@ -5,6 +5,8 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import type { Category } from "@/lib/types";
 import { formatDate } from "@/lib/format";
+import { Reveal } from "@/components/Reveal";
+import { ArrowRight, CaretLeft, CaretRight, DownloadSimple } from "@phosphor-icons/react";
 
 interface CalendarTrip {
   id: string;
@@ -17,9 +19,9 @@ interface CalendarTrip {
 }
 
 const COLORS: Record<string, string> = {
-  hikes: "#c97b3d",
+  hikes: "#c9702f",
   "out-of-state-trips": "#2f6f5e",
-  "out-in-the-wild": "#4c6b56",
+  "out-in-the-wild": "#55755f",
   "hikers-day-out": "#8a7a4a",
   "tea-and-pep-meets": "#6d5b7a",
 };
@@ -102,159 +104,214 @@ export default function PlanYourAdventurePage() {
 
   return (
     <>
-      <section className="bg-forest-deep py-14 text-white">
+      <section className="bg-forest-deep py-14 text-white md:py-16">
         <div className="container-x">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-white/60">Plan Your Adventure</p>
-          <h1 className="text-3xl font-extrabold md:text-4xl">Find your next trek</h1>
-          <p className="mt-3 max-w-xl text-white/75">
-            Not sure where to start? Answer three quick questions and we&apos;ll point you to the right activity.
+          <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
+            Find your next trek
+          </h1>
+          <p className="mt-4 max-w-xl leading-relaxed text-white/70">
+            Not sure where to start? Answer three quick questions and we&apos;ll
+            point you to the right activity. Then check the calendar to pick a date.
           </p>
         </div>
       </section>
 
       {/* Quiz */}
-      <section className="container-x py-12">
-        <div className="card">
-          <h2 className="text-xl font-bold text-forest">Find your fit</h2>
-          {quizResult ? (
-            <div className="mt-6 text-center">
-              <p className="text-foreground/70">We think you&apos;ll love:</p>
-              <p className="mt-2 text-2xl font-extrabold text-trail-deep capitalize">{catName(quizResult)}</p>
-              <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <Link href={`/activities/${quizResult}`} className="btn-forest">Explore {catName(quizResult)}</Link>
-                <button onClick={() => { setQuizStep(0); setQuizResult(null); }} className="btn-ghost">Restart quiz</button>
-              </div>
+      <section className="container-x py-14 md:py-20">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-3xl bg-forest text-white">
+            <div className="contour-pattern absolute inset-0 opacity-40" />
+            <div className="relative p-8 md:p-12">
+              {quizResult ? (
+                <div className="flex flex-col items-start gap-6">
+                  <p className="text-white/65">We think you&apos;ll love:</p>
+                  <p className="text-3xl font-extrabold capitalize tracking-tight md:text-4xl">
+                    {catName(quizResult)}
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <Link href={`/activities/${quizResult}`} className="btn-trail">
+                      Explore {catName(quizResult)}
+                      <ArrowRight size={15} weight="bold" />
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setQuizStep(0);
+                        setQuizResult(null);
+                      }}
+                      className="btn-ghost-light"
+                    >
+                      Restart quiz
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm font-semibold text-white/55">
+                    {quizStep + 1} of {QUIZ.length}
+                  </p>
+                  <h2 className="mt-3 text-2xl font-bold tracking-tight md:text-3xl">
+                    {QUIZ[quizStep].q}
+                  </h2>
+                  <div className="mt-7 flex max-w-md flex-col gap-3">
+                    {QUIZ[quizStep].options.map((o) => (
+                      <button
+                        key={o.label}
+                        onClick={() => {
+                          if (quizStep + 1 < QUIZ.length) setQuizStep(quizStep + 1);
+                          else setQuizResult(o.slug);
+                        }}
+                        className="group flex items-center justify-between rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-left text-base font-medium text-white transition-colors hover:border-trail hover:bg-white/10"
+                      >
+                        {o.label}
+                        <ArrowRight
+                          size={17}
+                          className="text-white/40 transition-colors group-hover:text-trail"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="mt-6">
-              <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-black/10">
-                <div className="h-full bg-trail transition-all" style={{ width: `${((quizStep + 1) / QUIZ.length) * 100}%` }} />
-              </div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-foreground/50">
-                Question {quizStep + 1} of {QUIZ.length}
-              </p>
-              <p className="mt-2 text-xl font-bold text-forest">{QUIZ[quizStep].q}</p>
-              <div className="mt-5 flex flex-wrap gap-3">
-                {QUIZ[quizStep].options.map((o) => (
-                  <button
-                    key={o.label}
-                    onClick={() => {
-                      if (quizStep + 1 < QUIZ.length) setQuizStep(quizStep + 1);
-                      else setQuizResult(o.slug);
-                    }}
-                    className="btn-ghost"
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* Calendar */}
-      <section className="container-x pb-12">
-        <div className="card">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-bold text-forest">Trip calendar</h2>
-            <div className="flex gap-2">
-              <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} className="btn-ghost px-4! py-2!">←</button>
-              <span className="grid place-items-center rounded-lg bg-forest px-4 text-sm font-bold text-white">
-                {month.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
-              </span>
-              <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} className="btn-ghost px-4! py-2!">→</button>
+      <section className="container-x pb-14 md:pb-20">
+        <Reveal>
+          <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-sm md:p-10">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="text-2xl font-bold tracking-tight text-forest">Trip calendar</h2>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+                  aria-label="Previous month"
+                  className="grid h-9 w-9 place-items-center rounded-full border border-black/10 text-forest transition-colors hover:bg-forest/5"
+                >
+                  <CaretLeft size={15} />
+                </button>
+                <span className="grid min-w-32 place-items-center rounded-full bg-forest px-4 py-2 text-sm font-bold text-white">
+                  {month.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
+                </span>
+                <button
+                  onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+                  aria-label="Next month"
+                  className="grid h-9 w-9 place-items-center rounded-full border border-black/10 text-forest transition-colors hover:bg-forest/5"
+                >
+                  <CaretRight size={15} />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-4">
+              {Object.entries(COLORS).map(([slug, color]) => (
+                <span key={slug} className="flex items-center gap-1.5 text-xs text-foreground/60">
+                  <span className="h-2 w-2 rounded-full" style={{ background: color }} />
+                  {catName(slug)}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-6 grid grid-cols-7 gap-1.5 overflow-x-auto text-center">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                <span key={d} className="pb-2 text-[11px] font-semibold uppercase tracking-wider text-foreground/45">
+                  {d}
+                </span>
+              ))}
+              {days.map((day, i) => {
+                const key = day
+                  ? `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+                  : null;
+                const dayTrips = key ? tripsByDay.get(key) ?? [] : [];
+                const colors = dayTrips.map((t) => COLORS[t.category_slug] ?? "#55755f");
+                return (
+                  <button
+                    key={i}
+                    disabled={!day}
+                    onClick={() => {
+                      if (day != null) setSelectedDay(selectedDay === String(day) ? null : String(day));
+                    }}
+                    className={`flex min-h-16 flex-col items-center justify-center rounded-xl p-1 text-sm transition-colors ${
+                      day ? "cursor-pointer hover:bg-forest/5" : ""
+                    } ${selectedDay === day ? "bg-forest text-white" : ""}`}
+                  >
+                    {day}
+                    <span className="mt-1.5 flex gap-1">
+                      {colors.slice(0, 3).map((c, j) => (
+                        <span
+                          key={j}
+                          className="h-1.5 w-1.5 rounded-full"
+                          style={{ background: selectedDay === day ? "#fff" : c }}
+                        />
+                      ))}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-8 border-t border-black/5 pt-6">
+              <h3 className="font-bold text-forest">
+                {selectedKey ? formatDate(selectedKey) : "Click a date to see trips"}
+              </h3>
+              {selectedTrips.length === 0 ? (
+                selectedKey && <p className="mt-2 text-sm text-foreground/60">No trips on this day.</p>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  {selectedTrips.map((t) => (
+                    <Link
+                      key={t.id}
+                      href={`/activities/${t.category_slug}/${t.slug}`}
+                      className="group flex items-center justify-between gap-4 rounded-2xl border border-black/5 bg-sand/40 px-5 py-4 transition-colors hover:border-forest/30 hover:bg-white"
+                    >
+                      <div>
+                        <p className="font-semibold text-forest group-hover:underline">{t.title}</p>
+                        <p className="mt-0.5 text-xs text-foreground/55">
+                          {catName(t.category_slug)}
+                          <span className="mx-2 text-foreground/30">|</span>
+                          {t.seats_booked}/{t.capacity} booked
+                        </p>
+                      </div>
+                      <ArrowRight size={16} className="shrink-0 text-forest/30 transition-colors group-hover:text-trail" />
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-
-          <div className="mt-4 flex flex-wrap gap-3">
-            {Object.entries(COLORS).map(([slug, color]) => (
-              <span key={slug} className="flex items-center gap-1.5 text-xs text-foreground/60">
-                <span className="h-2.5 w-2.5 rounded-full" style={{ background: color }} />
-                {catName(slug)}
-              </span>
-            ))}
-          </div>
-
-          <div className="mt-4 grid grid-cols-7 gap-1 overflow-x-auto text-center">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-              <span key={d} className="py-2 text-xs font-semibold uppercase text-foreground/50">{d}</span>
-            ))}
-            {days.map((day, i) => {
-              const key = day
-                ? `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
-                : null;
-              const dayTrips = key ? tripsByDay.get(key) ?? [] : [];
-              const colors = dayTrips.map((t) => COLORS[t.category_slug] ?? "#4c6b56");
-              return (
-                <button
-                  key={i}
-                  disabled={!day}
-                  onClick={() => {
-                    if (day != null) setSelectedDay(selectedDay === String(day) ? null : String(day));
-                  }}
-                  className={`flex min-h-16 flex-col items-center justify-center rounded-lg p-1 text-sm transition-colors ${
-                    day ? "hover:bg-forest/5 cursor-pointer" : ""
-                  } ${selectedDay === day ? "bg-forest text-white" : ""}`}
-                >
-                  {day}
-                  <span className="mt-1 flex gap-1">
-                    {colors.slice(0, 3).map((c, j) => (
-                      <span key={j} className="h-1.5 w-1.5 rounded-full" style={{ background: selectedDay === day ? "#fff" : c }} />
-                    ))}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-6">
-            <h3 className="font-bold text-forest">
-              {selectedKey ? formatDate(selectedKey) : "Click a date to see trips"}
-            </h3>
-            {selectedTrips.length === 0 ? (
-              selectedKey && <p className="mt-2 text-sm text-foreground/60">No trips on this day.</p>
-            ) : (
-              <div className="mt-3 space-y-3">
-                {selectedTrips.map((t) => (
-                  <Link
-                    key={t.id}
-                    href={`/activities/${t.category_slug}/${t.slug}`}
-                    className="flex items-center justify-between rounded-xl border border-black/10 p-4 hover:border-forest"
-                  >
-                    <div>
-                      <p className="font-semibold text-forest">{t.title}</p>
-                      <p className="text-xs text-foreground/60">{catName(t.category_slug)} · {t.seats_booked}/{t.capacity} booked</p>
-                    </div>
-                    <span className="text-sm font-semibold text-trail-deep">View →</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Group request + guide */}
-      <section className="container-x grid gap-6 pb-16 md:grid-cols-2">
-        <div className="card">
-          <h2 className="text-xl font-bold text-forest">Bring your group</h2>
-          <p className="mt-2 text-sm text-foreground/60">
-            Planning a corporate or friends&apos; outing? Tell us what you need and we&apos;ll get back to you.
-          </p>
-          <GroupRequestForm />
-        </div>
-        <div className="card flex flex-col justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-forest">Packing guide</h2>
-            <p className="mt-2 text-sm text-foreground/60">
-              Don&apos;t forget your boots. Download our free packing checklist so you show up ready.
+      <section className="container-x grid gap-6 pb-20 md:grid-cols-2 md:pb-28">
+        <Reveal>
+          <div className="h-full rounded-3xl border border-black/5 bg-white p-7 shadow-sm md:p-9">
+            <h2 className="text-2xl font-bold tracking-tight text-forest">Bring your group</h2>
+            <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+              Planning a corporate or friends&apos; outing? Tell us what you need
+              and we&apos;ll get back to you.
             </p>
+            <GroupRequestForm />
           </div>
-          <div className="mt-6">
-            <a href="/packing-checklist.pdf" className="btn-trail">Download packing checklist</a>
+        </Reveal>
+        <Reveal delay={80}>
+          <div className="flex h-full flex-col justify-between gap-6 rounded-3xl bg-forest p-7 text-white md:p-9">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Packing guide</h2>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">
+                Don&apos;t forget your boots. Download our free packing checklist
+                so you show up ready for the trail.
+              </p>
+            </div>
+            <div>
+              <a href="/packing-checklist.pdf" className="btn-trail">
+                <DownloadSimple size={16} weight="bold" />
+                Download packing checklist
+              </a>
+            </div>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );
@@ -268,22 +325,27 @@ function GroupRequestForm() {
   const [dates, setDates] = useState("");
   const [message, setMessage] = useState("");
 
-  const field = "w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none focus:border-forest";
-  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground/50";
+  const field =
+    "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-trail";
+  const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-foreground/50";
 
   if (sent) {
-    return <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700">Thanks! We&apos;ve got your request — we&apos;ll email you soon.</p>;
+    return (
+      <p className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        Thanks! We&apos;ve got your request. We&apos;ll email you soon.
+      </p>
+    );
   }
 
   return (
     <form
-      className="mt-4 space-y-3"
+      className="mt-5 space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         setSent(true);
       }}
     >
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className={label}>Name</label>
           <input required value={name} onChange={(e) => setName(e.target.value)} className={field} />
@@ -293,21 +355,39 @@ function GroupRequestForm() {
           <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
         </div>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className={label}>Group size</label>
-          <input required value={groupSize} onChange={(e) => setGroupSize(e.target.value)} className={field} placeholder="e.g. 10 people" />
+          <input
+            required
+            value={groupSize}
+            onChange={(e) => setGroupSize(e.target.value)}
+            className={field}
+            placeholder="e.g. 10 people"
+          />
         </div>
         <div>
           <label className={label}>Preferred dates</label>
-          <input value={dates} onChange={(e) => setDates(e.target.value)} className={field} placeholder="e.g. Nov 2026" />
+          <input
+            value={dates}
+            onChange={(e) => setDates(e.target.value)}
+            className={field}
+            placeholder="e.g. Nov 2026"
+          />
         </div>
       </div>
       <div>
         <label className={label}>Message</label>
-        <textarea rows={3} value={message} onChange={(e) => setMessage(e.target.value)} className={`${field} resize-y`} />
+        <textarea
+          rows={3}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className={`${field} resize-y`}
+        />
       </div>
-      <button type="submit" className="btn-forest">Send group request</button>
+      <button type="submit" className="btn-forest">
+        Send group request
+      </button>
     </form>
   );
 }
