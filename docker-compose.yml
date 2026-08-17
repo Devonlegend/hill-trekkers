@@ -1,0 +1,64 @@
+# The Hill Trekkers Club — local production-like stack
+# Usage: docker compose up --build
+# Brings up Postgres + the FastAPI API + the Next.js web frontend.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: devon
+      POSTGRES_DB: hill_trekkers_club
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ../../01-database-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ../../02-seed-data.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hill_trekkers_club"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: development
+      APP_BASE_URL: http://localhost:3000
+      PORT: "8000"
+      CORS_ORIGINS: http://localhost:3000
+      DATABASE_URL: postgresql://postgres:devon@db:5432/hill_trekkers_club
+      JWT_SECRET: dev-secret-6f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c
+      JWT_EXPIRES_MINUTES: "10080"
+      PAYSTACK_SECRET_KEY: sk_test_placeholder
+      PAYSTACK_PUBLIC_KEY: pk_test_placeholder
+      CLOUDINARY_CLOUD_NAME: ""
+      CLOUDINARY_API_KEY: ""
+      CLOUDINARY_API_SECRET: ""
+      LOCAL_UPLOAD_DIR: uploads
+      EMAIL_PROVIDER_API_KEY: ""
+      EMAIL_FROM_ADDRESS: hello@hilltrekkersclub.com
+      LOG_LEVEL: INFO
+      DB_POOL_MIN: "2"
+      DB_POOL_MAX: "10"
+    ports:
+      - "8000:8000"
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    environment:
+      FASTAPI_BASE_URL: http://api:8000
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:

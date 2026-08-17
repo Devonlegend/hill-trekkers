@@ -20,6 +20,7 @@ from app.services.security import (
     make_token,
 )
 from app.services.mailer import send_verification_email, send_password_reset_email
+from app.services.ratelimit import rate_limit
 
 router = APIRouter()
 
@@ -37,7 +38,11 @@ def _public_user(row: asyncpg.Record) -> dict:
 
 
 @router.post("/api/auth/signup", status_code=201)
-async def signup(body: SignupRequest, conn: asyncpg.Connection = Depends(get_db)):
+async def signup(
+    body: SignupRequest,
+    conn: asyncpg.Connection = Depends(get_db),
+    _=Depends(rate_limit(5, 60)),
+):
     email = body.email.lower()
     existing = await conn.fetchval("SELECT 1 FROM users WHERE email = $1", email)
     if existing:
@@ -73,6 +78,7 @@ async def signup(body: SignupRequest, conn: asyncpg.Connection = Depends(get_db)
 async def login(
     body: LoginRequest,
     conn: asyncpg.Connection = Depends(get_db),
+    _=Depends(rate_limit(10, 60)),
 ):
     email = body.email.lower()
     user = await conn.fetchrow("SELECT * FROM users WHERE email = $1", email)
@@ -114,7 +120,11 @@ async def verify_email(body: VerifyEmailRequest, conn: asyncpg.Connection = Depe
 
 
 @router.post("/api/auth/forgot-password")
-async def forgot_password(body: ForgotPasswordRequest, conn: asyncpg.Connection = Depends(get_db)):
+async def forgot_password(
+    body: ForgotPasswordRequest,
+    conn: asyncpg.Connection = Depends(get_db),
+    _=Depends(rate_limit(5, 60)),
+):
     email = body.email.lower()
     user = await conn.fetchrow("SELECT * FROM users WHERE email = $1", email)
     if user:

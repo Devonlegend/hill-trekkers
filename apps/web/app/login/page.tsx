@@ -13,7 +13,12 @@ function LoginForm() {
   const { setUser } = useAuth();
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const redirect = params.get("redirect") || "/dashboard";
+  const redirectParam = params.get("redirect");
+  // Only allow same-origin relative paths (no scheme, no protocol-relative //).
+  const redirect =
+    redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//")
+      ? redirectParam
+      : "/dashboard";
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -36,12 +41,12 @@ function LoginForm() {
   }
 
   const field = "w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none focus:border-forest";
-  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground/60";
+  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-muted";
 
   return (
     <div className="w-full max-w-md">
       <h1 className="text-3xl font-bold text-forest">Welcome back</h1>
-      <p className="mt-1 text-foreground/60">Sign in to your member account.</p>
+      <p className="mt-1 text-muted">Sign in to your member account.</p>
 
       <form onSubmit={onSubmit} className="card mt-8 space-y-4">
         {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>}
@@ -61,7 +66,7 @@ function LoginForm() {
         <button type="submit" disabled={submitting} className="btn-forest w-full">
           {submitting ? "Signing in…" : "Sign in"}
         </button>
-        <p className="text-center text-sm text-foreground/60">
+        <p className="text-center text-sm text-muted">
           New here?{" "}
           <Link href="/signup" className="font-semibold text-trail-deep hover:underline">Join the Club</Link>
         </p>
@@ -72,10 +77,13 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="container-x flex min-h-[70vh] items-center justify-center py-16">
-      <Suspense fallback={<div className="text-foreground/60">Loading…</div>}>
+    <section className="relative flex min-h-[calc(100dvh-4rem)] items-center justify-center overflow-hidden bg-forest-deep px-4 py-16">
+      <div className="contour-pattern absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
+      <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-trail/20 blur-3xl" aria-hidden="true" />
+      <Suspense fallback={<div className="text-white/70">Loading…</div>}>
         <LoginForm />
       </Suspense>
-    </div>
+    </section>
   );
 }

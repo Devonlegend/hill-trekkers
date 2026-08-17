@@ -55,7 +55,7 @@ export default function AdminBookingsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-forest">Bookings</h1>
-      <p className="mt-1 text-sm text-foreground/60">All member bookings and payments.</p>
+      <p className="mt-1 text-sm text-muted">All member bookings and payments.</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {["", "pending", "confirmed", "refunded", "cancelled", "expired"].map((s) => (
@@ -85,7 +85,7 @@ export default function AdminBookingsPage() {
             <div key={b.id} className="card flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-forest">{b.trip_title}</p>
-                <p className="mt-1 text-xs text-foreground/60">
+                <p className="mt-1 text-xs text-muted">
                   {b.user_name} · {b.user_email} · {b.tier_name} · {formatDate(b.created_at)}
                 </p>
                 <p className="mt-1 text-sm font-semibold text-trail-deep">

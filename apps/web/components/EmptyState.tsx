@@ -7,7 +7,7 @@ export function EmptyState({ title, message }: { title: string; message?: string
         <Mountains size={22} weight="duotone" />
       </span>
       <p className="font-semibold text-forest">{title}</p>
-      {message && <p className="max-w-sm text-sm text-foreground/60">{message}</p>}
+      {message && <p className="max-w-sm text-sm text-muted">{message}</p>}
     </div>
   );
 }

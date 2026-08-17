@@ -87,19 +87,19 @@ export default function PostDetailPage() {
 
   return (
     <div className="container-x max-w-3xl py-12">
-      <Link href="/community" className="inline-flex items-center gap-1.5 text-sm text-foreground/55 transition-colors hover:text-forest">
+      <Link href="/community" className="inline-flex items-center gap-1.5 text-sm text-muted-faint transition-colors hover:text-forest">
         <ArrowLeft size={15} />
         Back to community
       </Link>
 
-      <article className="mt-6 overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm">
+      <article className="mt-6 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-card">
         <div className="flex items-center gap-3 border-b border-black/5 p-5 md:p-6">
           <span className="grid h-10 w-10 place-items-center rounded-full bg-forest text-sm font-bold text-white">
             {post.author.full_name.slice(0, 1).toUpperCase()}
           </span>
           <div>
             <p className="font-semibold text-forest">{post.author.full_name}</p>
-            <p className="text-xs text-foreground/50">
+            <p className="text-xs text-muted-faint">
               {new Date(post.created_at).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "short",
@@ -148,7 +148,7 @@ export default function PostDetailPage() {
             {user && (
               <button
                 onClick={() => setReportOpen((v) => !v)}
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground/50 transition-colors hover:bg-black/5"
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-muted-faint transition-colors hover:bg-black/5"
               >
                 <Flag size={15} />
                 Report
@@ -181,11 +181,11 @@ export default function PostDetailPage() {
       <section className="mt-10">
         <h2 className="text-lg font-bold tracking-tight text-forest">
           Comments{" "}
-          <span className="text-sm font-normal text-foreground/50">({post.comment_count})</span>
+          <span className="text-sm font-normal text-muted-faint">({post.comment_count})</span>
         </h2>
 
         {user && (
-          <form onSubmit={submitComment} className="mt-4 rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
+          <form onSubmit={submitComment} className="mt-4 rounded-2xl border border-black/5 bg-white p-5 shadow-card">
             {commentError && (
               <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{commentError}</p>
             )}
@@ -207,7 +207,7 @@ export default function PostDetailPage() {
         )}
 
         {!user && (
-          <p className="mt-4 text-sm text-foreground/60">
+          <p className="mt-4 text-sm text-muted">
             <Link href="/login" className="font-semibold text-trail-deep hover:underline">
               Sign in
             </Link>{" "}
@@ -217,7 +217,7 @@ export default function PostDetailPage() {
 
         <div className="mt-5 space-y-3">
           {post.comments.length === 0 ? (
-            <p className="text-sm text-foreground/50">No comments yet.</p>
+            <p className="text-sm text-muted-faint">No comments yet.</p>
           ) : (
             post.comments.map((c) => (
               <div key={c.id} className="rounded-2xl border border-black/5 bg-white p-5">

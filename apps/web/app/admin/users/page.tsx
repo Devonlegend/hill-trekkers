@@ -47,7 +47,7 @@ export default function AdminUsersPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-forest">Users</h1>
-      <p className="mt-1 text-sm text-foreground/60">Member list and role management.</p>
+      <p className="mt-1 text-sm text-muted">Member list and role management.</p>
       {error && <p className="mt-3 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>}
 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-black/5 bg-white">
@@ -58,7 +58,7 @@ export default function AdminUsersPage() {
         ) : (
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="border-b border-black/5 text-left text-xs font-semibold uppercase text-foreground/50">
+              <tr className="border-b border-black/5 text-left text-xs font-semibold uppercase text-muted-faint">
                 <th className="px-5 py-3">Name</th>
                 <th className="px-5 py-3">Email</th>
                 <th className="px-5 py-3">Verified</th>
@@ -83,7 +83,7 @@ export default function AdminUsersPage() {
                       <option value="admin">admin</option>
                     </select>
                   </td>
-                  <td className="px-5 py-3 text-foreground/60">
+                  <td className="px-5 py-3 text-muted">
                     {u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}
                   </td>
                 </tr>

@@ -53,7 +53,7 @@ export default function AdminTripsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-forest">Trips</h1>
-          <p className="mt-1 text-sm text-foreground/60">Create and manage treks.</p>
+          <p className="mt-1 text-sm text-muted">Create and manage treks.</p>
         </div>
         <button onClick={() => setShowCreate((v) => !v)} className="btn-forest px-5! py-2!">
           {showCreate ? "Close" : "+ New trip"}
@@ -84,7 +84,7 @@ export default function AdminTripsPage() {
                 <Link href={`/admin/trips/${t.id}/pricing`} className="font-bold text-forest hover:underline">
                   {t.title}
                 </Link>
-                <p className="mt-1 text-xs text-foreground/60">
+                <p className="mt-1 text-xs text-muted">
                   {t.category_name} · {formatDate(t.start_date)} · {t.seats_booked}/{t.capacity} booked
                   {t.status === "published" ? "" : " · draft"}
                 </p>
@@ -119,7 +119,7 @@ function TripForm({ categories, onDone }: { categories: Category[]; onDone: (id:
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
 
   const field = "w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none focus:border-forest";
-  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground/50";
+  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-faint";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -182,11 +182,11 @@ function TripForm({ categories, onDone }: { categories: Category[]; onDone: (id:
       </div>
       <div>
         <label className={label}>Location</label>
-        <input name="location" className={field} />
+        <input name="location" maxLength={200} className={field} />
       </div>
       <div>
         <label className={label}>Meeting point</label>
-        <input name="meeting_point" className={field} />
+        <input name="meeting_point" maxLength={255} className={field} />
       </div>
       <div>
         <label className={label}>Difficulty</label>
@@ -198,7 +198,7 @@ function TripForm({ categories, onDone }: { categories: Category[]; onDone: (id:
       </div>
       <div>
         <label className={label}>Distance (km)</label>
-        <input name="distance_km" type="number" step="0.1" className={field} />
+        <input name="distance_km" type="number" step="0.1" min="0" max="9999.99" className={field} />
       </div>
       <div>
         <label className={label}>Start date</label>
@@ -206,7 +206,7 @@ function TripForm({ categories, onDone }: { categories: Category[]; onDone: (id:
       </div>
       <div>
         <label className={label}>Capacity</label>
-        <input name="capacity" type="number" min={1} required className={field} />
+        <input name="capacity" type="number" min={1} max={999999} required className={field} />
       </div>
       <div className="sm:col-span-2">
         <ImageUploader value={coverUrl} onChange={setCoverUrl} max={1} multiple={false} label="Cover image" />
@@ -218,7 +218,7 @@ function TripForm({ categories, onDone }: { categories: Category[]; onDone: (id:
         <button type="submit" disabled={submitting} className="btn-forest">
           {submitting ? "Creating…" : "Create trip"}
         </button>
-        <p className="mt-2 text-xs text-foreground/50">
+        <p className="mt-2 text-xs text-muted-faint">
           Next step: add pricing tiers before publishing.
         </p>
       </div>

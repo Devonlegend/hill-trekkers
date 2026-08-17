@@ -59,7 +59,7 @@ export function ImageUploader({
 
   return (
     <div>
-      <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground/50">{label}</label>
+      <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-faint">{label}</label>
       {error && <p className="mb-2 rounded-lg bg-red-50 px-3 py-1.5 text-xs text-red-700">{error}</p>}
       <div className="flex flex-wrap gap-2">
         {value.map((u, i) => (
@@ -81,7 +81,7 @@ export function ImageUploader({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="grid h-20 w-20 place-items-center rounded-xl border-2 border-dashed border-black/15 text-xs text-foreground/60 transition hover:border-forest hover:text-forest disabled:opacity-50"
+            className="grid h-20 w-20 place-items-center rounded-xl border-2 border-dashed border-black/15 text-xs text-muted transition hover:border-forest hover:text-forest disabled:opacity-50"
           >
             {uploading ? "…" : "+"}
           </button>

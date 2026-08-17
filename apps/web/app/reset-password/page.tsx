@@ -29,7 +29,7 @@ function ResetPasswordInner() {
   }
 
   const field = "w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none focus:border-forest";
-  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground/60";
+  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-muted";
 
   return (
     <div className="w-full max-w-md">
@@ -57,10 +57,13 @@ function ResetPasswordInner() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="container-x flex min-h-[60vh] items-center justify-center py-16">
-      <Suspense fallback={<p className="text-foreground/60">Loading…</p>}>
+    <section className="relative flex min-h-[calc(100dvh-4rem)] items-center justify-center overflow-hidden bg-forest-deep px-4 py-16">
+      <div className="contour-pattern absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
+      <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-trail/20 blur-3xl" aria-hidden="true" />
+      <Suspense fallback={<p className="text-white/70">Loading…</p>}>
         <ResetPasswordInner />
       </Suspense>
-    </div>
+    </section>
   );
 }

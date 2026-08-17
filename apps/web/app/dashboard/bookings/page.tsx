@@ -21,7 +21,7 @@ export default function MyBookingsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-forest">My Bookings</h1>
-      <p className="mt-1 text-sm text-foreground/60">Your trips and their payment status.</p>
+      <p className="mt-1 text-sm text-muted">Your trips and their payment status.</p>
 
       <div className="mt-6 space-y-4">
         {bookings === null ? (
@@ -36,7 +36,7 @@ export default function MyBookingsPage() {
                 <Link href={`/activities/activities/${b.trip_slug}`} className="font-bold text-forest hover:underline">
                   {b.trip_title}
                 </Link>
-                <p className="mt-1 text-xs text-foreground/60">
+                <p className="mt-1 text-xs text-muted">
                   {formatDate(b.start_date)} · {b.location ?? "—"} · {b.tier_name}
                 </p>
                 <p className="mt-1 text-sm font-semibold text-trail-deep">

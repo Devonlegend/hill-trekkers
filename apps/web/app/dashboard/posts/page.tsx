@@ -15,7 +15,7 @@ export default function MyPostsPage() {
   const load = useCallback(async () => {
     if (!user) return;
     try {
-      const data = await api<{ posts: Post[] }>(`/api/posts?limit=100`);
+      const data = await api<{ posts: Post[] }>(`/api/posts?limit=50`);
       setPosts(data.posts.filter((p) => p.author.id === user.id));
     } catch {
       setPosts([]);
@@ -31,7 +31,7 @@ export default function MyPostsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-forest">My Posts</h1>
-      <p className="mt-1 text-sm text-foreground/60">Everything you&apos;ve shared on the community feed.</p>
+      <p className="mt-1 text-sm text-muted">Everything you&apos;ve shared on the community feed.</p>
 
       <div className="mt-6 space-y-4">
         {posts === null ? (
@@ -46,7 +46,7 @@ export default function MyPostsPage() {
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-forest">{p.caption || "Untitled post"}</p>
-                <p className="mt-0.5 text-xs text-foreground/50">
+                <p className="mt-0.5 text-xs text-muted-faint">
                   {new Date(p.created_at).toLocaleDateString()} · {p.like_count} likes · {p.comment_count} comments
                 </p>
               </div>

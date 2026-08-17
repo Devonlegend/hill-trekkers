@@ -1,11 +1,9 @@
-import hashlib
-import hmac
 import json
 
-import httpx
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+from app import db
 from app.config import settings
 from app.services.paystack import mock_mark_success, is_mock_mode
 
@@ -57,18 +55,13 @@ async def mock_paystack_complete(reference: str):
     if not is_mock_mode():
         return {"ok": True}
     mock_mark_success(reference)
-    payload = json.dumps({"event": "charge.success", "data": {"reference": reference}}).encode()
-    signature = hmac.new(
-        settings.paystack_secret_key.encode("utf-8"),
-        payload,
-        hashlib.sha512,
-    ).hexdigest()
-    # Fire the real webhook endpoint with a valid signature so the whole
-    # signature-verification → verify → credit path runs unchanged.
-    async with httpx.AsyncClient() as client:
-        await client.post(
-            f"http://127.0.0.1:{settings.port}/api/payments/webhook",
-            headers={"x-paystack-signature": signature},
-            content=payload,
-        )
+    # Invoke the real webhook handler directly instead of HTTP-looping back to
+    # ourselves (which breaks behind a reverse proxy / multiple workers). This
+    # path is dev-only: is_mock_mode() is never True in production because the
+    # boot guard enforces real Paystack keys.
+    from app.routers.payments import _handle_charge_success
+
+    event = {"event": "charge.success", "data": {"reference": reference}}
+    async with db.pool.acquire() as conn:
+        await _handle_charge_success(event, conn)
     return {"ok": True}

@@ -180,7 +180,7 @@ export default function PlanYourAdventurePage() {
       {/* Calendar */}
       <section className="container-x pb-14 md:pb-20">
         <Reveal>
-          <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-sm md:p-10">
+          <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-card md:p-10">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <h2 className="text-2xl font-bold tracking-tight text-forest">Trip calendar</h2>
               <div className="flex items-center gap-2">
@@ -206,7 +206,7 @@ export default function PlanYourAdventurePage() {
 
             <div className="mt-5 flex flex-wrap gap-4">
               {Object.entries(COLORS).map(([slug, color]) => (
-                <span key={slug} className="flex items-center gap-1.5 text-xs text-foreground/60">
+                <span key={slug} className="flex items-center gap-1.5 text-xs text-muted">
                   <span className="h-2 w-2 rounded-full" style={{ background: color }} />
                   {catName(slug)}
                 </span>
@@ -215,7 +215,7 @@ export default function PlanYourAdventurePage() {
 
             <div className="mt-6 grid grid-cols-7 gap-1.5 overflow-x-auto text-center">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-                <span key={d} className="pb-2 text-[11px] font-semibold uppercase tracking-wider text-foreground/45">
+                <span key={d} className="pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-faint">
                   {d}
                 </span>
               ))}
@@ -234,7 +234,7 @@ export default function PlanYourAdventurePage() {
                     }}
                     className={`flex min-h-16 flex-col items-center justify-center rounded-xl p-1 text-sm transition-colors ${
                       day ? "cursor-pointer hover:bg-forest/5" : ""
-                    } ${selectedDay === day ? "bg-forest text-white" : ""}`}
+                    } ${selectedDay === String(day) ? "bg-forest text-white" : ""}`}
                   >
                     {day}
                     <span className="mt-1.5 flex gap-1">
@@ -256,7 +256,7 @@ export default function PlanYourAdventurePage() {
                 {selectedKey ? formatDate(selectedKey) : "Click a date to see trips"}
               </h3>
               {selectedTrips.length === 0 ? (
-                selectedKey && <p className="mt-2 text-sm text-foreground/60">No trips on this day.</p>
+                selectedKey && <p className="mt-2 text-sm text-muted">No trips on this day.</p>
               ) : (
                 <div className="mt-4 space-y-3">
                   {selectedTrips.map((t) => (
@@ -267,9 +267,9 @@ export default function PlanYourAdventurePage() {
                     >
                       <div>
                         <p className="font-semibold text-forest group-hover:underline">{t.title}</p>
-                        <p className="mt-0.5 text-xs text-foreground/55">
+                        <p className="mt-0.5 text-xs text-muted-faint">
                           {catName(t.category_slug)}
-                          <span className="mx-2 text-foreground/30">|</span>
+                          <span className="mx-2 text-muted-faint">|</span>
                           {t.seats_booked}/{t.capacity} booked
                         </p>
                       </div>
@@ -286,9 +286,9 @@ export default function PlanYourAdventurePage() {
       {/* Group request + guide */}
       <section className="container-x grid gap-6 pb-20 md:grid-cols-2 md:pb-28">
         <Reveal>
-          <div className="h-full rounded-3xl border border-black/5 bg-white p-7 shadow-sm md:p-9">
+          <div className="h-full rounded-2xl border border-black/5 bg-white p-7 shadow-card md:p-9">
             <h2 className="text-2xl font-bold tracking-tight text-forest">Bring your group</h2>
-            <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+            <p className="mt-2 text-sm leading-relaxed text-muted">
               Planning a corporate or friends&apos; outing? Tell us what you need
               and we&apos;ll get back to you.
             </p>
@@ -327,7 +327,7 @@ function GroupRequestForm() {
 
   const field =
     "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-trail";
-  const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-foreground/50";
+  const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-faint";
 
   if (sent) {
     return (

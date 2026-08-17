@@ -11,6 +11,7 @@ import { Reveal } from "@/components/Reveal";
 import { useAuth } from "@/components/auth-context";
 import { formatDateShort } from "@/lib/format";
 import { placeholderImage } from "@/lib/images";
+import { MountainMark } from "@/components/MountainMark";
 import { ArrowRight, ArrowUpRight } from "@phosphor-icons/react";
 
 export default function HomePage() {
@@ -98,7 +99,7 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold tracking-tight text-forest md:text-4xl">
                 Five ways to get out there
               </h2>
-              <p className="mt-3 text-foreground/60">
+              <p className="mt-3 text-muted">
                 Hikes, camping, and weekend escapes, planned and led by people
                 who know the trails.
               </p>
@@ -157,7 +158,7 @@ export default function HomePage() {
                 <h2 className="text-3xl font-bold tracking-tight text-forest md:text-4xl">
                   Upcoming treks
                 </h2>
-                <p className="mt-3 text-foreground/60">
+                <p className="mt-3 text-muted">
                   Book early for the best price. Seats go fast.
                 </p>
               </div>
@@ -180,7 +181,7 @@ export default function HomePage() {
                 <Reveal key={t.id} delay={i * 60}>
                   <Link
                     href={`/activities/${t.category_slug}/${t.slug}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-card transition-transform duration-200 hover:-translate-y-1"
                   >
                     <div className="relative overflow-hidden">
                       <div
@@ -228,7 +229,7 @@ export default function HomePage() {
                 <h2 className="text-3xl font-bold tracking-tight text-forest md:text-4xl">
                   Stories from the trail
                 </h2>
-                <p className="mt-3 text-foreground/60">
+                <p className="mt-3 text-muted">
                   Photos and notes from the club&apos;s trips.
                 </p>
               </div>
@@ -244,15 +245,19 @@ export default function HomePage() {
               <Reveal className="lg:col-span-2">
                 <Link
                   href={`/community/${posts[0].id}`}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-card transition-transform duration-200 hover:-translate-y-1"
                 >
                   <div className="relative overflow-hidden">
-                    <div
-                      className="aspect-[16/9] bg-sand bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
-                      style={{
-                        backgroundImage: `url(${posts[0].media_urls[0] || placeholderImage(posts[0].id, 1200, 675)})`,
-                      }}
-                    />
+                    {posts[0].media_urls[0] ? (
+                      <div
+                        className="aspect-[16/9] bg-sand bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
+                        style={{ backgroundImage: `url(${posts[0].media_urls[0]})` }}
+                      />
+                    ) : (
+                      <div className="grid aspect-[16/9] place-items-center bg-forest-deep">
+                        <MountainMark className="h-16 w-16" />
+                      </div>
+                    )}
                     {posts[0].category_name && (
                       <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-forest backdrop-blur">
                         {posts[0].category_name}
@@ -268,7 +273,7 @@ export default function HomePage() {
                         <p className="text-sm font-semibold text-forest">
                           {posts[0].author.full_name}
                         </p>
-                        <p className="text-xs text-foreground/50">
+                        <p className="text-xs text-muted-faint">
                           {new Date(posts[0].created_at).toLocaleDateString("en-GB", {
                             day: "numeric",
                             month: "short",
@@ -291,7 +296,7 @@ export default function HomePage() {
                   <Reveal key={p.id} delay={i * 80} className="flex-1">
                     <Link
                       href={`/community/${p.id}`}
-                      className="group flex h-full items-center gap-4 rounded-2xl border border-black/5 bg-white p-4 shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                      className="group flex h-full items-center gap-4 rounded-2xl border border-black/5 bg-white p-4 shadow-card transition-transform duration-200 hover:-translate-y-1"
                     >
                       <span className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-sand">
                         {p.media_urls[0] ? (

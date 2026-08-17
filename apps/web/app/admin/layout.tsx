@@ -25,7 +25,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }, [loading, user, router, pathname]);
 
   if (!checked) {
-    return <div className="container-x py-20 text-center text-foreground/60">Checking permissions…</div>;
+    return <div className="container-x py-20 text-center text-muted">Checking permissions…</div>;
   }
 
   const isAdmin = user?.role === "admin";
@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <div className="bg-sand/40">
       <div className="container-x grid gap-8 py-10 md:grid-cols-[200px_1fr]">
         <nav className="space-y-1 md:sticky md:top-24 md:self-start">
-          <p className="mb-3 px-4 text-xs font-semibold uppercase tracking-wide text-foreground/50">
+          <p className="mb-3 px-4 text-xs font-semibold uppercase tracking-wide text-muted-faint">
             Admin
           </p>
           {LINKS.filter((l) => l.show).map((l) => {
@@ -57,7 +57,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               </Link>
             );
           })}
-          <Link href="/dashboard" className="mt-4 block px-4 text-sm text-foreground/50 hover:underline">
+          <Link href="/dashboard" className="mt-4 block px-4 text-sm text-muted-faint hover:underline">
             ← Back to dashboard
           </Link>
         </nav>

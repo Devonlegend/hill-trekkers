@@ -75,7 +75,7 @@ function BookAndPayButton({ trip }: { trip: Trip }) {
         <Link href={`/login?redirect=${encodeURIComponent(tripUrl)}`} className="btn-forest w-full">
           Sign in to Book
         </Link>
-        <p className="text-center text-xs text-foreground/50">
+        <p className="text-center text-xs text-muted-faint">
           New here?{" "}
           <Link href={`/signup?redirect=${encodeURIComponent(tripUrl)}`} className="font-semibold text-trail-deep">
             Join the Club
@@ -122,10 +122,10 @@ function PricingPanel({ trip }: { trip: Trip }) {
   const countdown = useCountdown(nextTier?.valid_from);
 
   return (
-    <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-card">
       <div className="flex items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/50">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-faint">
             Current price
           </p>
           <div className="mt-2">
@@ -141,17 +141,17 @@ function PricingPanel({ trip }: { trip: Trip }) {
 
       {tiers.length > 0 && (
         <div className="mt-6">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-foreground/50">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted-faint">
             Price goes up
           </p>
           <ul className="space-y-2.5">
             {tiers.map((t: PricingTier) => (
               <li key={t.id} className="flex items-center justify-between text-sm">
-                <span className={t.id === active?.id ? "font-semibold text-forest" : "text-foreground/60"}>
+                <span className={t.id === active?.id ? "font-semibold text-forest" : "text-muted"}>
                   {t.tier_name}
                 </span>
                 <span className="flex items-center gap-3">
-                  <span className="text-xs text-foreground/50">{formatDate(t.valid_from)}</span>
+                  <span className="text-xs text-muted-faint">{formatDate(t.valid_from)}</span>
                   <PriceTag kobo={t.price_kobo} className="font-semibold" />
                 </span>
               </li>
@@ -326,7 +326,7 @@ export default function TripDetailPage() {
                   { dt: "Distance", dd: trip.distance_km != null ? `${trip.distance_km} km` : "Not set" },
                 ].map((row) => (
                   <div key={row.dt}>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/50">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-faint">
                       {row.dt}
                     </dt>
                     <dd className="mt-1.5 capitalize">{row.dd}</dd>
@@ -339,7 +339,7 @@ export default function TripDetailPage() {
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <PricingPanel trip={trip} />
-          <p className="mt-4 rounded-xl bg-sand/70 p-4 text-xs leading-relaxed text-foreground/60">
+          <p className="mt-4 rounded-xl bg-sand/70 p-4 text-xs leading-relaxed text-muted">
             Not sure this is for you?{" "}
             <Link href="/plan-your-adventure" className="font-semibold text-trail-deep hover:underline">
               Plan your adventure

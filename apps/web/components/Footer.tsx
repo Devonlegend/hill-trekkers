@@ -26,7 +26,7 @@ export function Footer() {
         </div>
 
         <div className="text-sm md:col-span-3">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/40">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
             Explore
           </p>
           <ul className="space-y-3">
@@ -41,7 +41,7 @@ export function Footer() {
         </div>
 
         <div className="text-sm md:col-span-4">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/40">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
             Get involved
           </p>
           <ul className="space-y-3">
@@ -63,8 +63,14 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10 py-5 text-center text-xs text-white/40">
-        © {new Date().getFullYear()} The Hill Trekkers Club
+      <div className="border-t border-white/10 py-5 text-xs text-white/60">
+        <div className="container-x flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <p>© {new Date().getFullYear()} The Hill Trekkers Club</p>
+          <nav className="flex items-center gap-5">
+            <Link href="/privacy" className="transition-colors hover:text-white">Privacy</Link>
+            <Link href="/terms" className="transition-colors hover:text-white">Terms</Link>
+          </nav>
+        </div>
       </div>
     </footer>
   );

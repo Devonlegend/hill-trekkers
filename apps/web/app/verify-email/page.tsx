@@ -23,7 +23,7 @@ function VerifyEmailInner() {
 
   return (
     <div className="card max-w-md text-center">
-      {state === "loading" && <p className="text-foreground/60">Verifying…</p>}
+      {state === "loading" && <p className="text-muted">Verifying…</p>}
       {state === "ok" && (
         <>
           <span className="text-4xl">🎉</span>
@@ -46,10 +46,13 @@ function VerifyEmailInner() {
 
 export default function VerifyEmailPage() {
   return (
-    <div className="container-x flex min-h-[50vh] items-center justify-center py-16">
-      <Suspense fallback={<p className="text-foreground/60">Loading…</p>}>
+    <section className="relative flex min-h-[calc(100dvh-4rem)] items-center justify-center overflow-hidden bg-forest-deep px-4 py-16">
+      <div className="contour-pattern absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
+      <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-trail/20 blur-3xl" aria-hidden="true" />
+      <Suspense fallback={<p className="text-white/70">Loading…</p>}>
         <VerifyEmailInner />
       </Suspense>
-    </div>
+    </section>
   );
 }

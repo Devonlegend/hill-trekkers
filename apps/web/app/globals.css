@@ -10,6 +10,8 @@
   --trail-deep: #92481a;
   --cream: #f6f4ed;
   --sand: #ece7d9;
+  --muted: #46534d;
+  --muted-faint: #5a6660;
 }
 
 @theme inline {
@@ -22,6 +24,8 @@
   --color-trail-deep: var(--trail-deep);
   --color-cream: var(--cream);
   --color-sand: var(--sand);
+  --color-muted: var(--muted);
+  --color-muted-faint: var(--muted-faint);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
@@ -258,4 +262,20 @@ h1, h2, h3 {
   .link-underline::after {
     transition: none;
   }
+}
+
+/* ---- Muted text (contrast-compliant: >= 4.5:1 on light surfaces) ---- */
+::placeholder {
+  color: var(--muted-faint);
+  opacity: 1;
+}
+
+/* ---- Paragraph widows (orphan reduction) -------------------------------- */
+p {
+  text-wrap: pretty;
+}
+
+/* ---- Tinted card shadow (forest-tinted to carry the brand hue) ----------- */
+.shadow-card {
+  box-shadow: 0 1px 2px rgba(30, 58, 47, 0.07), 0 4px 12px -4px rgba(30, 58, 47, 0.1);
 }

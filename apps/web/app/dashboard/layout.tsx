@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }, [loading, user, router, pathname]);
 
   if (!checked) {
-    return <div className="container-x py-20 text-center text-foreground/60">Checking your session…</div>;
+    return <div className="container-x py-20 text-center text-muted">Checking your session…</div>;
   }
 
   return (

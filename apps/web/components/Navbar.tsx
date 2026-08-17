@@ -110,9 +110,10 @@ export function Navbar() {
                     Dashboard
                   </Link>
                   <button
-                    onClick={() => {
-                      logout();
+                    onClick={async () => {
+                      await logout();
                       router.push("/");
+                      router.refresh();
                     }}
                     className="btn-ghost py-2!"
                   >

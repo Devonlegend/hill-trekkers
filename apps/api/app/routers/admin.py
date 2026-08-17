@@ -162,26 +162,48 @@ async def replace_pricing_tiers(
             valid_until = datetime.fromisoformat(t.valid_until)
         except ValueError:
             raise HTTPException(400, detail={"code": "BAD_DATE", "message": "Tier dates must be ISO 8601."})
+        # TIMESTAMPTZ comparison vs get_active_tier(now(utc)) requires aware datetimes
+        if valid_from.tzinfo is None:
+            valid_from = valid_from.replace(tzinfo=timezone.utc)
+        if valid_until.tzinfo is None:
+            valid_until = valid_until.replace(tzinfo=timezone.utc)
         if valid_until <= valid_from:
             raise HTTPException(400, detail={"code": "BAD_DATE_RANGE", "message": "Tier valid_until must be after valid_from."})
         tiers.append((t.tier_name, t.price_kobo, valid_from, valid_until, t.seat_cap))
 
-    tiers.sort(key=lambda x: x[2])
-    for prev, cur in zip(tiers, tiers[1:]):
-        if cur[2] < prev[3]:
-            raise HTTPException(
-                409,
-                detail={"code": "OVERLAPPING_TIERS", "message": "Pricing tiers must not overlap in time."},
-            )
+    # Book-referenced tiers are preserved; their time windows must also be
+    # treated as blocked so a replacement can't create two active tiers at once.
+    referenced = await conn.fetch(
+        "SELECT DISTINCT tier_id FROM bookings WHERE trip_id = $1", trip_id
+    )
+    referenced_ids = [str(r["tier_id"]) for r in referenced]
+    blocked: list[tuple] = []
+    if referenced_ids:
+        ref_rows = await conn.fetch(
+            """
+            SELECT valid_from, valid_until FROM trip_pricing_tiers
+            WHERE trip_id = $1 AND id = ANY($2::uuid[])
+            """,
+            trip_id,
+            referenced_ids,
+        )
+        blocked = [(None, None, r["valid_from"], r["valid_until"], None) for r in ref_rows]
+
+    candidates = tiers + blocked
+    for a in candidates:
+        for b in candidates:
+            if a is b:
+                continue
+            # Overlap: max(from) < min(until) with equal bounds treated as overlap
+            lo = max(a[2], b[2])
+            hi = min(a[3], b[3])
+            if lo < hi or (a[2] == b[2] and a[3] == b[3]):
+                raise HTTPException(
+                    409,
+                    detail={"code": "OVERLAPPING_TIERS", "message": "Pricing tiers must not overlap in time."},
+                )
 
     async with conn.transaction():
-        # Tiers already locked into existing bookings must be preserved so
-        # booking price history stays intact (price_locked_kobo is a snapshot,
-        # but the tier row is still FK-referenced). Only replace the rest.
-        referenced = await conn.fetch(
-            "SELECT DISTINCT tier_id FROM bookings WHERE trip_id = $1", trip_id
-        )
-        referenced_ids = [str(r["tier_id"]) for r in referenced]
         if referenced_ids:
             await conn.execute(
                 "DELETE FROM trip_pricing_tiers WHERE trip_id = $1 AND NOT (id = ANY($2::uuid[]))",
@@ -285,6 +307,9 @@ async def admin_list_bookings(
     if trip_id:
         args.append(trip_id)
         sql += f" AND b.trip_id = ${len(args)}"
+    if user["role"] != "admin":
+        args.append(user["id"])
+        sql += f" AND t.created_by = ${len(args)}"
     sql += " ORDER BY b.created_at DESC"
     rows = await conn.fetch(sql, *args)
     return [dict(r) | {"id": str(r["id"])} for r in rows]
@@ -310,7 +335,17 @@ async def refund_booking(
     await refund_transaction(payment["paystack_reference"])
 
     async with conn.transaction():
-        await conn.execute("UPDATE bookings SET status = 'refunded' WHERE id = $1", booking_id)
+        # Conditional update makes a concurrent refund a no-op instead of a
+        # double DB refund (Paystack itself dedupes by transaction reference).
+        updated = await conn.execute(
+            "UPDATE bookings SET status = 'refunded' WHERE id = $1 AND status = 'confirmed'",
+            booking_id,
+        )
+        if updated == "UPDATE 0":
+            raise HTTPException(
+                409,
+                detail={"code": "ALREADY_REFUNDED", "message": "This booking has already been refunded."},
+            )
         await conn.execute(
             "UPDATE trips SET seats_booked = GREATEST(seats_booked - $2, 0) WHERE id = $1",
             booking["trip_id"],

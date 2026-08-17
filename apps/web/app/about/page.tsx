@@ -151,7 +151,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold tracking-tight text-forest md:text-3xl">
               What we do
             </h2>
-            <p className="mt-3 max-w-xl text-foreground/60">
+            <p className="mt-3 max-w-xl text-muted">
               Five ways to get out there, each with its own rhythm.
             </p>
           </Reveal>
@@ -169,7 +169,7 @@ export default function AboutPage() {
                     <p className="font-bold text-forest group-hover:underline">
                       {item.label}
                     </p>
-                    <p className="mt-0.5 text-sm text-foreground/60">{item.desc}</p>
+                    <p className="mt-0.5 text-sm text-muted">{item.desc}</p>
                   </div>
                   <ArrowUpRight
                     size={18}
@@ -189,7 +189,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold tracking-tight text-forest md:text-3xl">
               We keep the trail kind
             </h2>
-            <p className="mt-3 text-foreground/60">
+            <p className="mt-3 text-muted">
               Everyone who joins us agrees to these basics.
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function AboutPage() {
                 </span>
                 <div>
                   <p className="font-bold text-forest">{c.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-foreground/60">
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
                     {c.desc}
                   </p>
                 </div>

@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/Skeleton";
 import { Reveal } from "@/components/Reveal";
 import { PostComposerModal } from "./PostComposerModal";
-import { placeholderImage } from "@/lib/images";
+import { MountainMark } from "@/components/MountainMark";
 import { Heart, ChatCircle, Plus } from "@phosphor-icons/react";
 
 function formatPostDate(iso: string) {
@@ -45,10 +45,14 @@ export default function CommunityPage() {
   const loadMore = async () => {
     if (!nextCursor) return;
     setLoadingMore(true);
-    const d = await load(nextCursor);
-    setPosts((prev) => [...(prev ?? []), ...d.posts]);
-    setNextCursor(d.next_cursor);
-    setLoadingMore(false);
+    try {
+      const d = await load(nextCursor);
+      setPosts((prev) => [...(prev ?? []), ...d.posts]);
+      setNextCursor(d.next_cursor);
+    } catch {
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   return (
@@ -56,7 +60,7 @@ export default function CommunityPage() {
       <section className="bg-forest-deep py-14 text-white md:py-16">
         <div className="container-x flex flex-wrap items-end justify-between gap-5">
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+            <p className="mb-3 text-sm font-semibold text-white/70">
               Community
             </p>
             <h1 className="max-w-xl text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
@@ -92,15 +96,19 @@ export default function CommunityPage() {
               <Reveal key={p.id} delay={(i % 2) * 70}>
                 <Link
                   href={`/community/${p.id}`}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-card transition-transform duration-200 hover:-translate-y-1"
                 >
                   <div className="relative overflow-hidden">
-                    <div
-                      className="aspect-[4/3] bg-sand bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
-                      style={{
-                        backgroundImage: `url(${p.media_urls[0] || placeholderImage(p.id, 800, 600)})`,
-                      }}
-                    />
+                    {p.media_urls[0] ? (
+                      <div
+                        className="aspect-[4/3] bg-sand bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
+                        style={{ backgroundImage: `url(${p.media_urls[0]})` }}
+                      />
+                    ) : (
+                      <div className="grid aspect-[4/3] place-items-center bg-forest-deep">
+                        <MountainMark className="h-16 w-16" />
+                      </div>
+                    )}
                     {p.category_name && (
                       <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-forest backdrop-blur">
                         {p.category_name}
@@ -114,13 +122,13 @@ export default function CommunityPage() {
                       </span>
                       <div>
                         <p className="text-sm font-semibold text-forest">{p.author.full_name}</p>
-                        <p className="text-xs text-foreground/50">{formatPostDate(p.created_at)}</p>
+                        <p className="text-xs text-muted-faint">{formatPostDate(p.created_at)}</p>
                       </div>
                     </div>
                     <p className="line-clamp-3 text-sm leading-relaxed text-foreground/80">
                       {p.caption || "View post"}
                     </p>
-                    <div className="mt-auto flex items-center gap-5 text-xs font-medium text-foreground/55">
+                    <div className="mt-auto flex items-center gap-5 text-xs font-medium text-muted-faint">
                       <span className={`inline-flex items-center gap-1.5 ${p.liked_by_me ? "text-trail-deep" : ""}`}>
                         <Heart size={14} weight={p.liked_by_me ? "fill" : "regular"} />
                         {p.like_count}

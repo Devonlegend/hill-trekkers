@@ -25,7 +25,7 @@ export default function ActivitiesPage() {
     <>
       <section className="bg-forest-deep py-16 text-white md:py-20">
         <div className="container-x">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+          <p className="mb-3 text-sm font-semibold text-white/70">
             Our activities
           </p>
           <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
@@ -52,7 +52,7 @@ export default function ActivitiesPage() {
               <Reveal>
                 <Link
                   href={`/activities/${feature.slug}`}
-                  className="group grid overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm md:grid-cols-2"
+                  className="group grid overflow-hidden rounded-2xl border border-black/5 bg-white shadow-card md:grid-cols-2"
                 >
                   <div className="relative min-h-64 overflow-hidden">
                     <div

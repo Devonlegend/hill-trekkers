@@ -28,7 +28,7 @@ function ConfirmInner() {
 
   return (
     <div className="card mx-auto max-w-md text-center">
-      {status === "checking" && <p className="text-foreground/60">Confirming your payment…</p>}
+      {status === "checking" && <p className="text-muted">Confirming your payment…</p>}
       {status === "success" && (
         <>
           <span className="text-5xl">🎉</span>
@@ -67,7 +67,7 @@ function ConfirmInner() {
 export default function BookingConfirmPage() {
   return (
     <div className="py-10">
-      <Suspense fallback={<p className="text-center text-foreground/60">Loading…</p>}>
+      <Suspense fallback={<p className="text-center text-muted">Loading…</p>}>
         <ConfirmInner />
       </Suspense>
     </div>

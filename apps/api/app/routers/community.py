@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 import asyncpg
 from jose import JWTError
@@ -5,8 +6,21 @@ from app.db import get_db
 from app.deps import get_current_user
 from app.schemas.post import PostCreate, CommentCreate, ReportCreate
 from app.services.security import decode_token
+from app.services.ratelimit import rate_limit
 
 router = APIRouter()
+
+
+def _json_array(value) -> list:
+    """asyncpg decodes Postgres ``json``/``jsonb`` columns as ``str``; parse them."""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        try:
+            return json.loads(value) or []
+        except (ValueError, TypeError):
+            return []
+    return value
 
 
 async def get_optional_user(
@@ -19,13 +33,16 @@ async def get_optional_user(
         payload = decode_token(token)
     except JWTError:
         return None
-    return await conn.fetchrow("SELECT * FROM users WHERE id = $1", payload["sub"])
+    user = await conn.fetchrow(
+        "SELECT * FROM users WHERE id = $1 AND is_active = true", payload["sub"]
+    )
+    return user
 
 
 @router.get("/api/posts")
 async def list_posts(
     cursor: str | None = None,
-    limit: int = Query(default=10, le=50),
+    limit: int = Query(default=10, ge=1, le=50),
     category: str | None = None,
     trip_id: str | None = None,
     user=Depends(get_optional_user),
@@ -85,7 +102,7 @@ def _serialize_post(r: asyncpg.Record) -> dict:
         "category_name": r["category_name"],
         "caption": r["caption"],
         "visibility": r["visibility"],
-        "media_urls": r["media_urls"],
+        "media_urls": _json_array(r["media_urls"]),
         "like_count": r["like_count"],
         "comment_count": r["comment_count"],
         "liked_by_me": r["liked_by_me"] > 0,
@@ -135,9 +152,9 @@ async def get_post(
             "id": str(c["id"]),
             "body": c["body"],
             "author_name": c["author_name"],
-            "created_at": c["created_at"].isoformat(),
+            "created_at": c["created_at"],
         }
-        for c in (row["comments"] or [])
+        for c in _json_array(row["comments"])
     ]
     return data
 
@@ -147,25 +164,27 @@ async def create_post(
     body: PostCreate,
     user=Depends(get_current_user),
     conn: asyncpg.Connection = Depends(get_db),
+    _=Depends(rate_limit(10, 60)),
 ):
-    post = await conn.fetchrow(
-        """
-        INSERT INTO posts (author_id, trip_id, caption, visibility)
-        VALUES ($1, $2, $3, $4)
-        RETURNING *
-        """,
-        user["id"],
-        body.trip_id,
-        body.caption,
-        body.visibility,
-    )
-    for i, url in enumerate(body.media_urls):
-        await conn.execute(
-            "INSERT INTO post_media (post_id, media_url, sort_order) VALUES ($1, $2, $3)",
-            post["id"],
-            url,
-            i,
+    async with conn.transaction():
+        post = await conn.fetchrow(
+            """
+            INSERT INTO posts (author_id, trip_id, caption, visibility)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+            """,
+            user["id"],
+            body.trip_id,
+            body.caption,
+            body.visibility,
         )
+        for i, url in enumerate(body.media_urls):
+            await conn.execute(
+                "INSERT INTO post_media (post_id, media_url, sort_order) VALUES ($1, $2, $3)",
+                post["id"],
+                url,
+                i,
+            )
     return {"id": str(post["id"])}
 
 
@@ -187,10 +206,12 @@ async def toggle_like(
         )
         liked_now = False
     else:
-        await conn.execute(
-            "INSERT INTO likes (post_id, user_id) VALUES ($1, $2)", post_id, user["id"]
+        result = await conn.execute(
+            "INSERT INTO likes (post_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+            post_id,
+            user["id"],
         )
-        liked_now = True
+        liked_now = result == "INSERT 0 1"
     count = await conn.fetchval("SELECT COUNT(*) FROM likes WHERE post_id = $1", post_id)
     return {"liked": liked_now, "like_count": count}
 

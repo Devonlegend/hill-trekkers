@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from datetime import date
+from fastapi import APIRouter, Depends, HTTPException, Query
 import asyncpg
 from app.db import get_db
 from app.services.pricing import get_active_tier
@@ -64,8 +65,8 @@ async def list_category_trips(
 
 @router.get("/api/trips/calendar")
 async def trip_calendar(
-    from_: str | None = None,
-    to: str | None = None,
+    from_: str | None = Query(default=None, alias="from"),
+    to: str | None = Query(default=None),
     conn: asyncpg.Connection = Depends(get_db),
 ):
     sql = """
@@ -77,10 +78,16 @@ async def trip_calendar(
     conds = []
     args = []
     if from_:
-        args.append(from_)
+        try:
+            args.append(date.fromisoformat(from_))
+        except ValueError:
+            raise HTTPException(422, detail={"code": "BAD_DATE", "message": "from must be an ISO 8601 date."})
         conds.append(f"t.start_date >= ${len(args)}")
     if to:
-        args.append(to)
+        try:
+            args.append(date.fromisoformat(to))
+        except ValueError:
+            raise HTTPException(422, detail={"code": "BAD_DATE", "message": "to must be an ISO 8601 date."})
         conds.append(f"t.start_date <= ${len(args)}")
     if conds:
         sql += " AND " + " AND ".join(conds)
@@ -99,7 +106,7 @@ async def trip_calendar(
 @router.get("/api/trips")
 async def list_trips(
     upcoming: bool = False,
-    limit: int = 20,
+    limit: int = Query(default=20, ge=1, le=100),
     conn: asyncpg.Connection = Depends(get_db),
 ):
     params: list = []
@@ -128,7 +135,12 @@ async def list_trips(
 @router.get("/api/trips/{slug}")
 async def get_trip(slug: str, conn: asyncpg.Connection = Depends(get_db)):
     trip = await conn.fetchrow(
-        "SELECT * FROM trips WHERE slug = $1 AND status IN ('published', 'closed')", slug
+        """
+        SELECT t.*, c.slug AS category_slug, c.name AS category_name
+        FROM trips t JOIN trip_categories c ON c.id = t.category_id
+        WHERE t.slug = $1 AND t.status IN ('published', 'closed')
+        """,
+        slug,
     )
     if not trip:
         raise HTTPException(404, detail={"code": "NOT_FOUND", "message": "Trip not found."})
@@ -139,9 +151,15 @@ async def get_trip(slug: str, conn: asyncpg.Connection = Depends(get_db)):
     media = await conn.fetch(
         "SELECT * FROM trip_media WHERE trip_id = $1 ORDER BY sort_order ASC", trip["id"]
     )
+    pending_holds = await conn.fetchval(
+        "SELECT COALESCE(SUM(seats), 0) FROM bookings WHERE trip_id = $1 AND status = 'pending'",
+        trip["id"],
+    )
     active = await get_active_tier(conn, str(trip["id"]))
     data = _trip_summary(trip, active)
     data["category_id"] = str(trip["category_id"])
+    data["category_slug"] = trip["category_slug"]
+    data["category_name"] = trip["category_name"]
     data["description"] = trip["description"]
     data["itinerary"] = trip["itinerary"]
     data["meeting_point"] = trip["meeting_point"]
@@ -149,5 +167,5 @@ async def get_trip(slug: str, conn: asyncpg.Connection = Depends(get_db)):
     data["status"] = trip["status"]
     data["media"] = [dict(m) | {"id": str(m["id"])} for m in media]
     data["pricing_tiers"] = [dict(t) | {"id": str(t["id"])} for t in tiers]
-    data["seats_remaining"] = trip["capacity"] - trip["seats_booked"]
+    data["seats_remaining"] = max(trip["capacity"] - trip["seats_booked"] - pending_holds, 0)
     return data

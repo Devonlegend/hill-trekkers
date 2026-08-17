@@ -38,7 +38,7 @@ export function PostComposerModal({
   }
 
   const field = "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-trail";
-  const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-foreground/50";
+  const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-faint";
 
   return (
     <div
@@ -46,7 +46,7 @@ export function PostComposerModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-3xl border border-black/5 bg-white p-6 shadow-xl md:p-8"
+        className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl md:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
@@ -54,7 +54,7 @@ export function PostComposerModal({
           <button
             onClick={onClose}
             aria-label="Close"
-            className="grid h-9 w-9 place-items-center rounded-full text-foreground/60 transition-colors hover:bg-black/5"
+            className="grid h-9 w-9 place-items-center rounded-full text-muted transition-colors hover:bg-black/5"
           >
             <X size={18} weight="bold" />
           </button>

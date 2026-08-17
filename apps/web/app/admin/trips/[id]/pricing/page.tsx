@@ -10,7 +10,8 @@ import { formatKobo } from "@/lib/format";
 interface TierDraft {
   key: number;
   tier_name: string;
-  price_kobo: number;
+  /** Price in naira — the input shows naira; converted to kobo on save. */
+  price: number;
   valid_from: string;
   valid_until: string;
 }
@@ -52,7 +53,7 @@ export default function PricingEditorPage() {
         t.pricing_tiers.map((tier, i) => ({
           key: i,
           tier_name: tier.tier_name,
-          price_kobo: tier.price_kobo,
+          price: tier.price_kobo / 100,
           valid_from: toDateTimeLocal(tier.valid_from),
           valid_until: toDateTimeLocal(tier.valid_until),
         }))
@@ -75,7 +76,7 @@ export default function PricingEditorPage() {
     const payload = {
       tiers: tiers.map((t) => ({
         tier_name: t.tier_name,
-        price_kobo: nairaToKobo(t.price_kobo),
+        price_kobo: nairaToKobo(t.price),
         valid_from: new Date(t.valid_from).toISOString(),
         valid_until: new Date(t.valid_until).toISOString(),
       })),
@@ -88,6 +89,7 @@ export default function PricingEditorPage() {
       setSaved(true);
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "Failed to save tiers");
+      throw e;
     } finally {
       setSaving(false);
     }
@@ -102,7 +104,7 @@ export default function PricingEditorPage() {
       {
         key: Date.now(),
         tier_name: `Tier ${prev.length + 1}`,
-        price_kobo: prev.length > 0 ? prev[prev.length - 1].price_kobo + 50000 : 100000,
+        price: prev.length > 0 ? prev[prev.length - 1].price + 5000 : 15000,
         valid_from: toDateTimeLocal(start.toISOString()),
         valid_until: toDateTimeLocal(end.toISOString()),
       },
@@ -121,9 +123,9 @@ export default function PricingEditorPage() {
 
   return (
     <div>
-      <Link href="/admin" className="text-sm text-foreground/60 hover:underline">← Trips</Link>
+      <Link href="/admin" className="text-sm text-muted hover:underline">← Trips</Link>
       <h1 className="mt-2 text-2xl font-bold text-forest">{trip.title}</h1>
-      <p className="mt-1 text-sm text-foreground/60">
+      <p className="mt-1 text-sm text-muted">
         Status: <span className="font-semibold capitalize">{trip.status}</span> · Edit pricing tiers below.
       </p>
 
@@ -135,18 +137,18 @@ export default function PricingEditorPage() {
           <h2 className="font-bold text-forest">Pricing tiers</h2>
           <button onClick={addTier} className="btn-ghost !px-4 !py-2 text-xs">+ Add tier</button>
         </div>
-        <p className="mt-1 text-xs text-foreground/50">
+        <p className="mt-1 text-xs text-muted-faint">
           Price is in Naira here (stored as kobo). Tiers must not overlap in time.
         </p>
 
         <div className="mt-4 space-y-3">
           {tiers.length === 0 && (
-            <p className="text-sm text-foreground/50">No tiers yet. Add at least one before publishing.</p>
+            <p className="text-sm text-muted-faint">No tiers yet. Add at least one before publishing.</p>
           )}
           {tiers.map((t, i) => (
             <div key={t.key} className="grid gap-3 rounded-xl border border-black/10 p-4 sm:grid-cols-[1fr_120px_1fr_1fr_auto]">
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase text-foreground/50">Name</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-faint">Name</label>
                 <input
                   className={input}
                   value={t.tier_name}
@@ -156,19 +158,19 @@ export default function PricingEditorPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase text-foreground/50">Price (₦)</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-faint">Price (₦)</label>
                 <input
                   type="number"
                   min={1}
                   className={input}
-                  value={t.price_kobo}
+                  value={t.price}
                   onChange={(e) =>
-                    setTiers((prev) => prev.map((x) => (x.key === t.key ? { ...x, price_kobo: Number(e.target.value) } : x)))
+                    setTiers((prev) => prev.map((x) => (x.key === t.key ? { ...x, price: Number(e.target.value) } : x)))
                   }
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase text-foreground/50">Valid from</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-faint">Valid from</label>
                 <input
                   type="datetime-local"
                   className={input}
@@ -179,7 +181,7 @@ export default function PricingEditorPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase text-foreground/50">Valid until</label>
+                <label className="mb-1 block text-xs font-semibold uppercase text-muted-faint">Valid until</label>
                 <input
                   type="datetime-local"
                   className={input}
@@ -191,7 +193,7 @@ export default function PricingEditorPage() {
               </div>
               <button
                 onClick={() => setTiers((prev) => prev.filter((x) => x.key !== t.key))}
-                className="mt-5 grid h-9 w-9 place-items-center self-end rounded-lg text-foreground/50 hover:bg-red-50 hover:text-red-600"
+                className="mt-5 grid h-9 w-9 place-items-center self-end rounded-lg text-muted-faint hover:bg-red-50 hover:text-red-600"
                 title="Remove tier"
               >
                 ✕
@@ -208,7 +210,7 @@ export default function PricingEditorPage() {
                 <li key={t.key} className="flex justify-between text-foreground/70">
                   <span>{t.tier_name}</span>
                   <span>
-                    {formatKobo(nairaToKobo(t.price_kobo))} · {new Date(t.valid_from).toLocaleDateString()} → {new Date(t.valid_until).toLocaleDateString()}
+                    {formatKobo(nairaToKobo(t.price))} · {new Date(t.valid_from).toLocaleDateString()} → {new Date(t.valid_until).toLocaleDateString()}
                   </span>
                 </li>
               ))}
@@ -223,7 +225,11 @@ export default function PricingEditorPage() {
           {trip.status !== "published" && tiers.length > 0 && (
             <button
               onClick={async () => {
-                await save();
+                try {
+                  await save();
+                } catch {
+                  return;
+                }
                 await api(`/api/admin/trips/${params.id}`, {
                   method: "PATCH",
                   body: JSON.stringify({ status: "published" }),

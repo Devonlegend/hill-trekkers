@@ -15,7 +15,7 @@ export default function ProfilePage() {
   if (!user) return null;
 
   const field = "w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm outline-none focus:border-forest";
-  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground/50";
+  const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-faint";
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +48,7 @@ export default function ProfilePage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-forest">Profile & safety</h1>
-      <p className="mt-1 text-sm text-foreground/60">Keep your emergency and medical info up to date.</p>
+      <p className="mt-1 text-sm text-muted">Keep your emergency and medical info up to date.</p>
 
       <form onSubmit={onSubmit} className="card mt-6 space-y-4">
         {message && <p className="rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-700">{message}</p>}
@@ -68,7 +68,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="rounded-xl bg-sand/70 p-4">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/50">Emergency contact</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-faint">Emergency contact</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className={label}>Name</label>

@@ -1,5 +1,4 @@
 import hashlib
-import hmac
 import secrets
 from datetime import datetime, timezone
 
@@ -21,11 +20,17 @@ def is_cloudinary_configured() -> bool:
 
 
 def _sign(params: dict) -> str:
+    """Cloudinary upload signature.
+
+    Cloudinary signs with a plain SHA-1 of the alphabetically-sorted
+    ``key=value`` pairs joined by ``&`` with the API secret appended directly
+    (no separator). See the ``api_sign_request`` helper in the official
+    pycloudinary SDK — an HMAC here produces a "Signature does not match"
+    rejection from the upload API.
+    """
     text = "&".join(f"{k}={v}" for k, v in sorted(params.items()))
-    return hmac.new(
-        settings.cloudinary_api_secret.encode("utf-8"),
-        text.encode("utf-8"),
-        hashlib.sha1,
+    return hashlib.sha1(
+        f"{text}{settings.cloudinary_api_secret}".encode("utf-8")
     ).hexdigest()
 
 

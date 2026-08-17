@@ -127,7 +127,7 @@ export default function CategoryPage() {
                 <Reveal key={t.id} delay={i * 50}>
                   <Link
                     href={`/activities/${slug}/${t.slug}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-card transition-transform duration-200 hover:-translate-y-1"
                   >
                     <div className="relative overflow-hidden">
                       <div
@@ -145,7 +145,7 @@ export default function CategoryPage() {
                         {t.title}
                       </h3>
                       {t.location && (
-                        <p className="flex items-center gap-1.5 text-sm text-foreground/60">
+                        <p className="flex items-center gap-1.5 text-sm text-muted">
                           <MapPin size={14} />
                           {t.location}
                         </p>

@@ -60,7 +60,7 @@ export default function AdminCommunityPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-forest">Community moderation</h1>
-      <p className="mt-1 text-sm text-foreground/60">Review reports and hide or remove content.</p>
+      <p className="mt-1 text-sm text-muted">Review reports and hide or remove content.</p>
 
       <div className="mt-4 flex gap-2">
         {["open", "reviewed", "dismissed"].map((s) => (
@@ -87,13 +87,13 @@ export default function AdminCommunityPage() {
             <div key={r.id} className="card">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-forest">Reported by {r.reporter_name}</p>
-                <span className="text-xs text-foreground/50">{formatDate(r.created_at)}</span>
+                <span className="text-xs text-muted-faint">{formatDate(r.created_at)}</span>
               </div>
               <p className="mt-2 text-sm text-foreground/80">
                 {r.post_caption ? `Post: "${r.post_caption}"` : r.comment_body ? `Comment: "${r.comment_body}"` : "Target unknown"}
               </p>
               {r.reason && (
-                <p className="mt-1 text-xs text-foreground/50">Reason: {r.reason}</p>
+                <p className="mt-1 text-xs text-muted-faint">Reason: {r.reason}</p>
               )}
               {filter === "open" && r.post_id && (
                 <div className="mt-3 flex gap-2">
@@ -101,9 +101,6 @@ export default function AdminCommunityPage() {
                   <button onClick={() => act(r, "remove")} className="btn rounded bg-red-600 px-4! py-2! text-xs text-white hover:bg-red-700">Remove</button>
                   <button onClick={() => act(r, "dismiss")} className="btn-ghost px-4! py-2! text-xs">Dismiss</button>
                 </div>
-              )}
-              {filter === "open" && r.post_id && (
-                <button onClick={() => act(r, "dismiss")} className="mt-3 btn-ghost px-4! py-2! text-xs">Dismiss</button>
               )}
             </div>
           ))

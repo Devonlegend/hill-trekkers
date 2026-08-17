@@ -7,6 +7,7 @@ from app.deps import get_current_user, require_email_verified
 from app.schemas.booking import BookingCreate
 from app.services.pricing import get_active_tier
 from app.services.paystack import initialize_transaction
+from app.services.ratelimit import rate_limit
 
 router = APIRouter()
 
@@ -16,6 +17,7 @@ async def create_booking(
     body: BookingCreate,
     user=Depends(get_current_user),
     _=Depends(require_email_verified),
+    _rl=Depends(rate_limit(10, 60)),
     conn: asyncpg.Connection = Depends(get_db),
 ):
     async with conn.transaction():
@@ -26,7 +28,18 @@ async def create_booking(
         if not trip:
             raise HTTPException(404, detail={"code": "TRIP_NOT_FOUND", "message": "Trip not found."})
 
-        if trip["seats_booked"] + body.seats > trip["capacity"]:
+        # Pending (unpaid) bookings hold their seats until expiry, so they must
+        # count against capacity too — otherwise two holds can both pay and the
+        # second confirm would over-sell the trip.
+        reserved = await conn.fetchval(
+            """
+            SELECT COALESCE(SUM(b.seats), 0)
+            FROM bookings b
+            WHERE b.trip_id = $1 AND b.status = 'pending'
+            """,
+            body.trip_id,
+        )
+        if trip["seats_booked"] + reserved + body.seats > trip["capacity"]:
             raise HTTPException(
                 409, detail={"code": "TRIP_SOLD_OUT", "message": "Not enough seats remaining."}
             )
@@ -36,6 +49,24 @@ async def create_booking(
             raise HTTPException(
                 409, detail={"code": "NO_ACTIVE_PRICING", "message": "This trip is not currently open for booking."}
             )
+
+        # Per-tier seat cap (optional "Early Bird" limited batch, etc.)
+        if tier["seat_cap"] is not None:
+            tier_used = await conn.fetchval(
+                """
+                SELECT COALESCE(SUM(b.seats), 0)
+                FROM bookings b
+                WHERE b.trip_id = $1 AND b.tier_id = $2
+                  AND b.status IN ('pending', 'confirmed')
+                """,
+                body.trip_id,
+                tier["id"],
+            )
+            if tier_used + body.seats > tier["seat_cap"]:
+                raise HTTPException(
+                    409,
+                    detail={"code": "TIER_CAP_REACHED", "message": "This pricing tier's limited seats are booked out."},
+                )
 
         price_locked_kobo = tier["price_kobo"] * body.seats
         reference = f"htc_{uuid.uuid4().hex}"
