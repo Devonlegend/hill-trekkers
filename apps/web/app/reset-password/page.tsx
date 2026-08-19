@@ -33,7 +33,7 @@ function ResetPasswordInner() {
 
   return (
     <div className="w-full max-w-md">
-      <h1 className="text-3xl font-bold text-forest">Choose a new password</h1>
+      <h1 className="text-3xl font-bold text-white">Choose a new password</h1>
       {done ? (
         <div className="card mt-8 space-y-4">
           <p className="text-sm text-foreground/70">Your password has been updated.</p>

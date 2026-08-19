@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowRight } from "@phosphor-icons/react";
 import { api } from "@/lib/api";
 import type { Booking } from "@/lib/types";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -20,14 +21,31 @@ export default function MyBookingsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-forest">My Bookings</h1>
-      <p className="mt-1 text-sm text-muted">Your trips and their payment status.</p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-forest">My Bookings</h1>
+          <p className="mt-1 text-sm text-muted">Your trips and their payment status.</p>
+        </div>
+        <Link href="/activities" className="btn-trail">
+          Book a trip
+          <ArrowRight size={15} weight="bold" />
+        </Link>
+      </div>
 
       <div className="mt-6 space-y-4">
         {bookings === null ? (
           <Skeleton className="h-40" />
         ) : bookings.length === 0 ? (
-          <EmptyState title="No bookings yet" message="Browse trips and book your first adventure." />
+          <EmptyState
+            title="No bookings yet"
+            message="Browse trips and book your first adventure."
+            action={
+              <Link href="/activities" className="btn-forest">
+                Browse trips
+                <ArrowRight size={15} weight="bold" />
+              </Link>
+            }
+          />
         ) : (
           bookings.map((b) => (
             <div key={b.id} className="card flex flex-col gap-4 sm:flex-row sm:items-center">

@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./auth-context";
 import { useState } from "react";
 import { List, X, ArrowRight } from "@phosphor-icons/react";
-import { MountainMark } from "./MountainMark";
 
 const NAV = [
   { href: "/about", label: "About" },
@@ -24,7 +23,11 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-black/5 bg-[var(--cream)]/90 backdrop-blur">
       <div className="container-x flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <MountainMark />
+          <img
+            src="/hilltrekkers.jpg"
+            alt="Hill Trekkers Club"
+            className="h-9 w-9 shrink-0 rounded-xl object-cover"
+          />
           <span className="text-[17px] font-bold tracking-tight text-forest">
             Hill Trekkers Club
           </span>

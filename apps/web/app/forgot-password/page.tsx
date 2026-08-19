@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
       <div className="absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
       <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-trail/20 blur-3xl" aria-hidden="true" />
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-bold text-forest">Reset your password</h1>
+        <h1 className="text-3xl font-bold text-white">Reset your password</h1>
         {sent ? (
           <div className="card mt-8">
             <p className="text-sm text-foreground/70">

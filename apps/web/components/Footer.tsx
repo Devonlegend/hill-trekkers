@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { MountainMark } from "./MountainMark";
+import { useAuth } from "./auth-context";
 
 const EXPLORE = [
   { href: "/activities", label: "Activities" },
@@ -9,12 +11,17 @@ const EXPLORE = [
 ];
 
 export function Footer() {
+  const { user } = useAuth();
   return (
     <footer className="mt-auto border-t border-white/5 bg-forest-deep text-white/65">
       <div className="container-x grid gap-10 py-14 md:grid-cols-12">
         <div className="md:col-span-5">
           <div className="flex items-center gap-2.5">
-            <MountainMark />
+            <img
+              src="/hilltrekkers.jpg"
+              alt="Hill Trekkers Club"
+              className="h-9 w-9 shrink-0 rounded-xl object-cover"
+            />
             <span className="text-[17px] font-bold tracking-tight text-white">
               Hill Trekkers Club
             </span>
@@ -45,21 +52,26 @@ export function Footer() {
             Get involved
           </p>
           <ul className="space-y-3">
-            <li>
-              <Link href="/signup" className="transition-colors hover:text-white">
-                Join the Club
-              </Link>
-            </li>
-            <li>
-              <Link href="/dashboard" className="transition-colors hover:text-white">
-                Member dashboard
-              </Link>
-            </li>
-            <li>
-              <Link href="/login" className="transition-colors hover:text-white">
-                Sign in
-              </Link>
-            </li>
+            {user ? (
+              <li>
+                <Link href="/dashboard" className="transition-colors hover:text-white">
+                  Go to dashboard
+                </Link>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <Link href="/signup" className="transition-colors hover:text-white">
+                    Join the Club
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/login" className="transition-colors hover:text-white">
+                    Sign in
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

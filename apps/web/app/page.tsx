@@ -36,8 +36,8 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-forest-deep text-white">
-        <div className="contour-pattern absolute inset-0 opacity-40" />
-        <div className="absolute -left-40 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" />
+        <div className="contour-pattern absolute inset-0 opacity-40" aria-hidden="true" />
+        <div className="absolute -left-40 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
         <div className="container-x relative grid min-h-[100dvh] items-center gap-14 py-20 lg:grid-cols-12 lg:py-24">
           <div className="lg:col-span-7">
             <h1
@@ -78,8 +78,8 @@ export default function HomePage() {
             style={{ "--d": "260ms" } as React.CSSProperties}
           >
             <div className="relative">
-              <div className="absolute -inset-3 rounded-[2rem] border border-white/10" />
-              <div className="relative overflow-hidden rounded-[1.75rem] bg-moss/20">
+              <div className="absolute -inset-3 rounded-3xl border border-white/10" />
+              <div className="relative overflow-hidden rounded-3xl bg-moss/20">
                 <img
                   src={placeholderImage("hill-trekkers-summit", 1000, 1200)}
                   alt="Trekkers standing on a summit ridge at sunset"
@@ -175,7 +175,14 @@ export default function HomePage() {
               <TripCardSkeleton />
               <TripCardSkeleton />
             </div>
-          ) : trips.length === 0 ? null : (
+          ) : trips.length === 0 ? (
+            <div className="mt-10 rounded-2xl border border-dashed border-black/15 px-6 py-16 text-center">
+              <p className="font-semibold text-forest">No upcoming treks yet</p>
+              <p className="mt-2 text-sm text-muted">
+                New adventures are being planned. Check back soon.
+              </p>
+            </div>
+          ) : (
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {trips.map((t, i) => (
                 <Reveal key={t.id} delay={i * 60}>

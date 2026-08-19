@@ -283,20 +283,10 @@ export default function PlanYourAdventurePage() {
         </Reveal>
       </section>
 
-      {/* Group request + guide */}
-      <section className="container-x grid gap-6 pb-20 md:grid-cols-2 md:pb-28">
+      {/* Packing guide */}
+      <section className="container-x pb-20 md:pb-28">
         <Reveal>
-          <div className="h-full rounded-2xl border border-black/5 bg-white p-7 shadow-card md:p-9">
-            <h2 className="text-2xl font-bold tracking-tight text-forest">Bring your group</h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted">
-              Planning a corporate or friends&apos; outing? Tell us what you need
-              and we&apos;ll get back to you.
-            </p>
-            <GroupRequestForm />
-          </div>
-        </Reveal>
-        <Reveal delay={80}>
-          <div className="flex h-full flex-col justify-between gap-6 rounded-3xl bg-forest p-7 text-white md:p-9">
+          <div className="flex flex-col justify-between gap-6 rounded-3xl bg-forest p-7 text-white md:flex-row md:items-center md:p-9">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">Packing guide</h2>
               <p className="mt-2 text-sm leading-relaxed text-white/70">
@@ -304,7 +294,7 @@ export default function PlanYourAdventurePage() {
                 so you show up ready for the trail.
               </p>
             </div>
-            <div>
+            <div className="shrink-0">
               <a href="/packing-checklist.pdf" className="btn-trail">
                 <DownloadSimple size={16} weight="bold" />
                 Download packing checklist
@@ -317,77 +307,4 @@ export default function PlanYourAdventurePage() {
   );
 }
 
-function GroupRequestForm() {
-  const [sent, setSent] = useState(false);
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [groupSize, setGroupSize] = useState("");
-  const [dates, setDates] = useState("");
-  const [message, setMessage] = useState("");
 
-  const field =
-    "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-trail";
-  const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-faint";
-
-  if (sent) {
-    return (
-      <p className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-        Thanks! We&apos;ve got your request. We&apos;ll email you soon.
-      </p>
-    );
-  }
-
-  return (
-    <form
-      className="mt-5 space-y-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setSent(true);
-      }}
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className={label}>Name</label>
-          <input required value={name} onChange={(e) => setName(e.target.value)} className={field} />
-        </div>
-        <div>
-          <label className={label}>Email</label>
-          <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
-        </div>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className={label}>Group size</label>
-          <input
-            required
-            value={groupSize}
-            onChange={(e) => setGroupSize(e.target.value)}
-            className={field}
-            placeholder="e.g. 10 people"
-          />
-        </div>
-        <div>
-          <label className={label}>Preferred dates</label>
-          <input
-            value={dates}
-            onChange={(e) => setDates(e.target.value)}
-            className={field}
-            placeholder="e.g. Nov 2026"
-          />
-        </div>
-      </div>
-      <div>
-        <label className={label}>Message</label>
-        <textarea
-          rows={3}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className={`${field} resize-y`}
-        />
-      </div>
-      <button type="submit" className="btn-forest">
-        Send group request
-      </button>
-    </form>
-  );
-}

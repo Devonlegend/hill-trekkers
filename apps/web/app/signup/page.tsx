@@ -70,8 +70,8 @@ function SignupInner() {
       <div className="absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
       <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-trail/20 blur-3xl" aria-hidden="true" />
       <div className="w-full max-w-lg">
-        <h1 className="text-3xl font-bold text-forest">Join the Club</h1>
-        <p className="mt-1 text-muted">Create your member account to book trips and join the community.</p>
+        <h1 className="text-3xl font-bold text-white">Join the Club</h1>
+        <p className="mt-1 text-white/70">Create your member account to book trips and join the community.</p>
 
         <form onSubmit={onSubmit} className="card mt-8 space-y-4">
           {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>}
