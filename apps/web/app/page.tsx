@@ -37,7 +37,6 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-forest-deep text-white">
         <div className="contour-pattern absolute inset-0 opacity-40" aria-hidden="true" />
-        <div className="absolute -left-40 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
         <div className="container-x relative grid min-h-[100dvh] items-center gap-14 py-20 lg:grid-cols-12 lg:py-24">
           <div className="lg:col-span-7">
             <h1
@@ -340,7 +339,6 @@ export default function HomePage() {
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl bg-forest text-white">
             <div className="contour-pattern absolute inset-0 opacity-50" />
-            <div className="absolute -right-20 -top-24 h-80 w-80 rounded-full bg-trail/25 blur-3xl" />
             <div className="relative grid gap-8 p-10 md:grid-cols-2 md:items-center md:p-14">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">

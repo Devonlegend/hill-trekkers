@@ -88,9 +88,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <section className="relative flex min-h-[calc(100dvh-4rem)] items-center justify-center overflow-hidden bg-forest-deep px-4 py-16">
-      <div className="contour-pattern absolute inset-0 opacity-40" aria-hidden="true" />
-      <div className="absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-moss/25 blur-3xl" aria-hidden="true" />
-      <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-trail/20 blur-3xl" aria-hidden="true" />
+      <div className="contour-pattern pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
       <Suspense fallback={<div className="text-white/70">Loading…</div>}>
         <LoginForm />
       </Suspense>
